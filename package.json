@@ -30,6 +30,31 @@
                 "title": "update",
                 "category": "zoombar"
             }
+        ],
+        "configuration":[
+            {
+                "title": "zoombar configuration",
+                "properties": {
+                    "defaultZoom": {
+                        "type": "number",
+                        "default": 100,
+                        "description": "default zoom"
+                    },
+                    "zoomUnit": {
+                        "type": "number",
+                        "default": 20,
+                        "description": "zoom unit"
+                    },
+                    "zoomPreset": {
+                        "type": ["array", null],
+                        "items": {
+                            "type": "number"
+                        },
+                        "default": null,
+                        "description": "zoom preset"
+                    }
+                }
+            }
         ]
     },
     "scripts": {
