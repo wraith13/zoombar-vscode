@@ -6,6 +6,8 @@ import * as vscode from 'vscode';
 export module ZoomBar
 {
     var indicator : vscode.StatusBarItem;
+    var zoomOutLabel : vscode.StatusBarItem;
+    var zoomInLabel : vscode.StatusBarItem;
 
     function getConfiguration<type>(key?: string): type
     {
@@ -17,6 +19,18 @@ export module ZoomBar
 
     export function registerCommand(context: vscode.ExtensionContext): void
     {
+        zoomInLabel = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
+        zoomInLabel.text = "+";
+        zoomInLabel.command = "zoombar-vscode.zoomIn";
+        context.subscriptions.push(zoomInLabel);
+        context.subscriptions.push
+        (
+            vscode.commands.registerCommand
+            (
+                'zoombar-vscode.zoomIn', zoomIn
+            )
+        );
+        zoomInLabel.show();
         indicator = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
         context.subscriptions.push(indicator);
         context.subscriptions.push
@@ -26,10 +40,32 @@ export module ZoomBar
                 'zoombar-vscode.update', update
             )
         );
+        indicator.text = "zoom";
+        indicator.show();
+        zoomOutLabel = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
+        zoomOutLabel.text = "-";
+        zoomOutLabel.command = "zoombar-vscode.zoomOut";
+        context.subscriptions.push(zoomOutLabel);
+        context.subscriptions.push
+        (
+            vscode.commands.registerCommand
+            (
+                'zoombar-vscode.zoomOut', zoomOut
+            )
+        );
+        zoomOutLabel.show();
         update();
     }
 
     export async function update() : Promise<void>
+    {
+        updateIndicator(new Date());
+    }
+    export async function zoomOut() : Promise<void>
+    {
+        updateIndicator(new Date());
+    }
+    export async function zoomIn() : Promise<void>
     {
         updateIndicator(new Date());
     }
