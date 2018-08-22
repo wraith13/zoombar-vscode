@@ -37,12 +37,12 @@
                 "properties": {
                     "defaultZoom": {
                         "type": "number",
-                        "default": 100,
+                        "default": 100.0,
                         "description": "default zoom"
                     },
                     "zoomUnit": {
                         "type": "number",
-                        "default": 20,
+                        "default": 20.0,
                         "description": "zoom unit"
                     },
                     "zoomPreset": {
