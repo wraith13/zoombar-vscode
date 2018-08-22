@@ -9,6 +9,10 @@ export module ZoomBar
     var zoomOutLabel : vscode.StatusBarItem;
     var zoomInLabel : vscode.StatusBarItem;
 
+    const systemZoomUnit = 20.0;
+    const systemZoomUnitRate = (systemZoomUnit + 100.0) / 100.0;
+    const zoomLog = Math.log(systemZoomUnitRate);
+
     function getConfiguration<type>(key?: string): type
     {
         const configuration = vscode.workspace.getConfiguration("zoombar-vscode");
@@ -90,6 +94,14 @@ export module ZoomBar
         indicator.show();
     }
 
+    export function levelToPercent(value : number) : number
+    {
+        return Math.pow(systemZoomUnitRate, value) * 100.0;
+    }
+    export function percentToLevel(value : number) : number
+    {
+        return Math.log(value / 100.0) / zoomLog;
+    }
     export function numberToByteString(value : number) : string
     {
         if (value <= 0.0)
