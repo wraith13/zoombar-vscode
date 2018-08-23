@@ -22,10 +22,5 @@ suite("Extension Tests", () => {
         assert.equal(0.0 * 100, Math.round(ZoomBar.ZoomBar.percentToLevel(100.0) *100.0));
         assert.equal(1.0 * 100, Math.round(ZoomBar.ZoomBar.percentToLevel(120.0) *100.0));
         assert.equal(2.0 * 100, Math.round(ZoomBar.ZoomBar.percentToLevel(144.0) *100.0));
-        assert.equal("00", ZoomBar.ZoomBar.numberToByteString(-100));
-        assert.equal("00", ZoomBar.ZoomBar.numberToByteString(0.0));
-        assert.equal("7f", ZoomBar.ZoomBar.numberToByteString(0.5));
-        assert.equal("ff", ZoomBar.ZoomBar.numberToByteString(1.0));
-        assert.equal("ff", ZoomBar.ZoomBar.numberToByteString(100));
     });
 });
