@@ -35,17 +35,17 @@
             {
                 "title": "zoombar configuration",
                 "properties": {
-                    "defaultZoom": {
+                    "zoombar.defaultZoom": {
                         "type": "number",
                         "default": 100.0,
                         "description": "default zoom"
                     },
-                    "zoomUnit": {
+                    "zoombar.zoomUnit": {
                         "type": "number",
                         "default": 20.0,
                         "description": "zoom unit"
                     },
-                    "zoomPreset": {
+                    "zoombar.zoomPreset": {
                         "type": ["array", null],
                         "items": {
                             "type": "number"
