@@ -77,6 +77,22 @@
                         "type": "string",
                         "default": "-",
                         "description": "zoom out label"
+                    },
+                    "zoombar.uiDisplayOrder": {
+                        "type": "string",
+                        "enum": [
+                            "",
+                            "%",
+                            "+-",
+                            "-+",
+                            "-%+",
+                            "-+%",
+                            "%-+",
+                            "%+-",
+                            "+%-",
+                            "+-%"
+                        ],
+                        "default": "-%+"
                     }
                 }
             }

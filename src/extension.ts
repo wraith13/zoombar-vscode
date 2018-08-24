@@ -14,6 +14,11 @@ export module ZoomBar
     const systemZoomUnitRate = (systemZoomUnit + 100.0) / 100.0;
     const zoomLog = Math.log(systemZoomUnitRate);
 
+    function distinctFilter<type>(value : type, index : number, self : type[]) : boolean
+    {
+        return index === self.indexOf(value);
+    }
+
     function getConfiguration<type>(key? : string, section : string = "zoombar") : type
     {
         const configuration = vscode.workspace.getConfiguration(section);
@@ -46,7 +51,7 @@ export module ZoomBar
         var result = getConfiguration<number[]>("zoomPreset");
 
         //  distinct
-        result = result.filter((value, index, self) => index === self.indexOf(value));
+        result = result.filter(distinctFilter);
 
         //  sort
         result.sort((a,b) => b - a);
@@ -97,15 +102,12 @@ export module ZoomBar
         zoomLabel = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
         zoomLabel.text = "zoom";
         zoomLabel.command = "zoombar-vscode.selectZoom";
-        zoomLabel.show();
         zoomInLabel = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
         zoomInLabel.text = getZoomInLabelText();
         zoomInLabel.command = "zoombar-vscode.zoomIn";
-        zoomInLabel.show();
         zoomOutLabel = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
         zoomOutLabel.text = getZoomOutLabelText();
         zoomOutLabel.command = "zoombar-vscode.zoomOut";
-        zoomOutLabel.show();
 
         context.subscriptions.push(zoomLabel);
         context.subscriptions.push(zoomInLabel);
@@ -187,10 +189,45 @@ export module ZoomBar
     }
     export function updateIndicator() : void
     {
-        //  本質的にはここで zoomInLabel と zoomOutLabel の text をアップデートする必要はないのだがこうしないと表示順が崩れる ( vscode v1.26.1 )
-        zoomInLabel.text = getZoomInLabelText();
-        zoomLabel.text = percentToDisplayString(levelToPercent(getZoomLevel()));
-        zoomOutLabel.text = getZoomOutLabelText();
+        var uiDisplayOrder = getConfiguration<string>("uiDisplayOrder");
+
+        uiDisplayOrder
+            .split("")
+            .filter(distinctFilter)
+            .reverse()
+            .forEach
+            (
+                i =>
+                {
+                    switch(i)
+                    {
+                    case "+":
+                        zoomInLabel.text = getZoomInLabelText();
+                        zoomInLabel.show();
+                        break;
+                    case "%":
+                        zoomLabel.text = percentToDisplayString(levelToPercent(getZoomLevel()));
+                        zoomLabel.show();
+                        break;
+                    case "-":
+                        zoomOutLabel.text = getZoomOutLabelText();
+                        zoomOutLabel.show();
+                        break;
+                    }
+                }
+            );
+        if (uiDisplayOrder.indexOf("+") < 0)
+        {
+            zoomInLabel.hide();
+        }
+        if (uiDisplayOrder.indexOf("%") < 0)
+        {
+            zoomLabel.hide();
+        }
+        if (uiDisplayOrder.indexOf("-") < 0)
+        {
+            zoomOutLabel.hide();
+        }
     }
 
     export function levelToPercent(value : number) : number
