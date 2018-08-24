@@ -1,6 +1,6 @@
 {
     "name": "zoombar-vscode",
-    "displayName": "zoombar",
+    "displayName": "Zoom Bar",
     "description": "This Visual Studio Code Extension provides zooming UI in statusbar.",
     "version": "0.0.1",
     "publisher": "wraith13",
@@ -28,27 +28,27 @@
             {
                 "command": "zoombar-vscode.selectZoom",
                 "title": "Select Zoom",
-                "category": "zoombar"
+                "category": "Zoom Bar"
             },
             {
                 "command": "zoombar-vscode.resetZoom",
                 "title": "Reset Zoom",
-                "category": "zoombar"
+                "category": "Zoom Bar"
             },
             {
                 "command": "zoombar-vscode.zoomIn",
                 "title": "Zoom In",
-                "category": "zoombar"
+                "category": "Zoom Bar"
             },
             {
                 "command": "zoombar-vscode.zoomOut",
                 "title": "Zoom Out",
-                "category": "zoombar"
+                "category": "Zoom Bar"
             }
         ],
         "configuration":[
             {
-                "title": "zoombar configuration",
+                "title": "Zoom Bar Configuration",
                 "properties": {
                     "zoombar.defaultZoom": {
                         "type": "number",
