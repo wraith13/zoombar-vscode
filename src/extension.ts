@@ -5,7 +5,8 @@ import * as vscode from 'vscode';
 
 export module ZoomBar
 {
-    var indicator : vscode.StatusBarItem;
+    var pass_through;
+    var zoomLabel : vscode.StatusBarItem;
     var zoomOutLabel : vscode.StatusBarItem;
     var zoomInLabel : vscode.StatusBarItem;
 
@@ -13,20 +14,71 @@ export module ZoomBar
     const systemZoomUnitRate = (systemZoomUnit + 100.0) / 100.0;
     const zoomLog = Math.log(systemZoomUnitRate);
 
-    function getConfiguration<type>(key?: string): type
+    function getConfiguration<type>(key? : string, section : string = "zoombar") : type
     {
-        const configuration = vscode.workspace.getConfiguration("zoombar-vscode");
+        const configuration = vscode.workspace.getConfiguration(section);
         return key ?
             configuration[key] :
             configuration;
     }
-
-    export function registerCommand(context: vscode.ExtensionContext): void
+    function getZoomLevel() : number
     {
-        zoomInLabel = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
-        zoomInLabel.text = "+";
-        zoomInLabel.command = "zoombar-vscode.zoomIn";
-        context.subscriptions.push(zoomInLabel);
+        return getConfiguration<number>("zoomLevel", "window") || 0.0;
+    }
+    function setZoomLevel(zoomLevel : number) : void
+    {
+        vscode.workspace.getConfiguration("window").update("zoomLevel", zoomLevel, true);
+    }
+    function getDefaultZoom() : number
+    {
+        return getConfiguration<number>("defaultZoom");
+    }
+    function getZoomUnit() : number
+    {
+        return getConfiguration<number>("zoomUnit");
+    }
+    function getZoomUnitLevel() : number
+    {
+        return percentToLevel(100.0 +getZoomUnit());
+    }
+    function getZoomPreset() : number[]
+    {
+        var result = getConfiguration<number[]>("zoomPreset");
+
+        //  distinct
+        result = result.filter((value, index, self) => index === self.indexOf(value));
+
+        //  sort
+        result.sort((a,b) => b - a);
+
+        return result;
+    }
+    function getZoomInLabelText() : string
+    {
+        return getConfiguration<string>("zoomInLabel");
+    }
+    function getZoomOutLabelText() : string
+    {
+        return getConfiguration<string>("zoomOutLabel");
+    }
+
+    export function registerCommand(context : vscode.ExtensionContext): void
+    {
+        console.log("zoombar.registerCommand();");
+        context.subscriptions.push
+        (
+            vscode.commands.registerCommand
+            (
+                'zoombar-vscode.selectZoom', selectZoom
+            )
+        );
+        context.subscriptions.push
+        (
+            vscode.commands.registerCommand
+            (
+                'zoombar-vscode.resetZoom', resetZoom
+            )
+        );
         context.subscriptions.push
         (
             vscode.commands.registerCommand
@@ -34,22 +86,6 @@ export module ZoomBar
                 'zoombar-vscode.zoomIn', zoomIn
             )
         );
-        zoomInLabel.show();
-        indicator = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
-        context.subscriptions.push(indicator);
-        context.subscriptions.push
-        (
-            vscode.commands.registerCommand
-            (
-                'zoombar-vscode.update', update
-            )
-        );
-        indicator.text = "zoom";
-        indicator.show();
-        zoomOutLabel = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
-        zoomOutLabel.text = "-";
-        zoomOutLabel.command = "zoombar-vscode.zoomOut";
-        context.subscriptions.push(zoomOutLabel);
         context.subscriptions.push
         (
             vscode.commands.registerCommand
@@ -57,41 +93,104 @@ export module ZoomBar
                 'zoombar-vscode.zoomOut', zoomOut
             )
         );
+
+        zoomLabel = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
+        zoomLabel.text = "zoom";
+        zoomLabel.command = "zoombar-vscode.selectZoom";
+        zoomLabel.show();
+        zoomInLabel = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
+        zoomInLabel.text = getZoomInLabelText();
+        zoomInLabel.command = "zoombar-vscode.zoomIn";
+        zoomInLabel.show();
+        zoomOutLabel = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
+        zoomOutLabel.text = getZoomOutLabelText();
+        zoomOutLabel.command = "zoombar-vscode.zoomOut";
         zoomOutLabel.show();
-        update();
+
+        context.subscriptions.push(zoomLabel);
+        context.subscriptions.push(zoomInLabel);
+        context.subscriptions.push(zoomOutLabel);
+
+        vscode.workspace.onDidChangeConfiguration(() => updateIndicator());
+        updateIndicator();
     }
 
-    export async function update() : Promise<void>
+    export async function selectZoom() : Promise<void>
     {
-        updateIndicator(new Date());
+        console.log("zoombar.selectZoom();");
+        const currentZoom = roundZoom(levelToPercent(getZoomLevel()));
+        const preset = getZoomPreset();
+        const select = await vscode.window.showQuickPick
+        (
+            [
+                {
+                    label: `Reset zoom`,
+                    description: "",
+                    detail: getDefaultZoom().toString(),
+                },
+                {
+                    label: `Input zoom`,
+                    description: "",
+                    detail: "*",
+                }
+            ].concat(
+                preset.map
+                (
+                    i => pass_through =
+                    {
+                            label: percentToDisplayString(i),
+                            description: currentZoom === roundZoom(i) ? "(current)": "",
+                            detail: i.toString()
+                    }
+                )
+            ),
+            {
+                placeHolder: "Select a zoom",
+            }
+        );
+        if (select)
+        {
+            if ("*" === select.detail)
+            {
+                let zoom : any = await vscode.window.showInputBox
+                (
+                    {
+                        prompt: "Input a zoom",
+                        value: currentZoom.toString(),
+                    }
+                );
+                if (undefined !== zoom)
+                {
+                    setZoomLevel(percentToLevel(parseFloat(zoom)));
+                }
+            }
+            else
+            {
+                setZoomLevel(percentToLevel(parseFloat(select.detail)));
+            }
+        }
+    }
+    export async function resetZoom() : Promise<void>
+    {
+        console.log("zoombar.resetZoom();");
+        setZoomLevel(percentToLevel(getDefaultZoom()));
     }
     export async function zoomOut() : Promise<void>
     {
-        updateIndicator(new Date());
+        console.log("zoombar.zoomOut();");
+        setZoomLevel(getZoomLevel() -getZoomUnitLevel());
     }
     export async function zoomIn() : Promise<void>
     {
-        updateIndicator(new Date());
+        console.log("zoombar.zoomIn();");
+        setZoomLevel(getZoomLevel() +getZoomUnitLevel());
     }
-    export function updateIndicator(lastUpdate : Date) : void
+    export function updateIndicator() : void
     {
-        const day = 24 *60 *60 *1000;
-        const limit = lastUpdate.getTime() +day;
-        const left = limit - Date.now();
-        const show = getConfiguration("show");
-        const text =
-        (
-            ("lest stamp" !== show ? lastUpdate.toLocaleString(): "")
-            +" "
-            +("last stamp" !== show ? leftTimeToString(left): "")
-        )
-        .trim();
-        console.log(text);
-        const color = makeLeftTimeColor((left *1.0) /(day *1.0));
-        console.log(color);
-        indicator.text = text;
-        indicator.color = color;
-        indicator.show();
+        //  本質的にはここで zoomInLabel と zoomOutLabel の text をアップデートする必要はないのだがこうしないと表示順が崩れる ( vscode v1.26.1 )
+        zoomInLabel.text = getZoomInLabelText();
+        zoomLabel.text = percentToDisplayString(levelToPercent(getZoomLevel()));
+        zoomOutLabel.text = getZoomOutLabelText();
     }
 
     export function levelToPercent(value : number) : number
@@ -102,51 +201,21 @@ export module ZoomBar
     {
         return Math.log(value / 100.0) / zoomLog;
     }
-    export function numberToByteString(value : number) : string
+    export function roundZoom(value : number) : number
     {
-        if (value <= 0.0)
-        {
-            return "00";
-        }
-        if (1.0 <= value)
-        {
-            return "ff";
-        }
-        return ("00" +Math.floor(value *255).toString(16)).substr(-2);
+        return Math.round(value *100.0) /100.0;
     }
-    export function makeLeftTimeColor(LeftTimeRate : number) : string
+    export function percentToDisplayString(value : number, locales?: string | string[]) : string
     {
-        return "#"
-            + numberToByteString(1.0 - LeftTimeRate)
-            + numberToByteString(Math.min(0.5, LeftTimeRate))
-            + numberToByteString(0.0);
-    }
-
-    function pad(value : number) : string
-    {
-        return (10 <= value ? "":　"0") +value.toString();
-    }
-    function leftTimeToString(leftTime : number) : string
-    {
-        if (leftTime < 0)
-        {
-            return "-" + leftTimeToString(-leftTime);
-        }
-        else
-        {
-            const totalSeconds = Math.floor(leftTime /1000);
-            //const seconds = totalSeconds % 60;
-            const totalMinutes = Math.floor(totalSeconds /60);
-            const minutes = totalMinutes % 60;
-            const hours = Math.floor(totalMinutes /60);
-            return pad(hours) +":" +pad(minutes); //+":" +pad(seconds);
-        }
+        return `${roundZoom(value / 100.0).toLocaleString(locales, { style: "percent" })}`;
     }
 }
 
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: vscode.ExtensionContext) : void
+{
     ZoomBar.registerCommand(context);
 }
 
-export function deactivate() {
+export function deactivate() : void
+{
 }

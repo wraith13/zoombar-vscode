@@ -26,8 +26,23 @@
     "contributes": {
         "commands": [
             {
-                "command": "zoombar-vscode.update",
-                "title": "update",
+                "command": "zoombar-vscode.selectZoom",
+                "title": "Select Zoom",
+                "category": "zoombar"
+            },
+            {
+                "command": "zoombar-vscode.resetZoom",
+                "title": "Reset Zoom",
+                "category": "zoombar"
+            },
+            {
+                "command": "zoombar-vscode.zoomIn",
+                "title": "Zoom In",
+                "category": "zoombar"
+            },
+            {
+                "command": "zoombar-vscode.zoomOut",
+                "title": "Zoom Out",
                 "category": "zoombar"
             }
         ],
@@ -52,6 +67,16 @@
                         },
                         "default": [300.0, 200.0, 150.0, 120.0, 110.0, 100.0, 90.0, 80.0, 75.0, 50.0],
                         "description": "zoom preset"
+                    },
+                    "zoombar.zoomInLabel": {
+                        "type": "string",
+                        "default": "+",
+                        "description": "zoom in label"
+                    },
+                    "zoombar.zoomOutLabel": {
+                        "type": "string",
+                        "default": "-",
+                        "description": "zoom out label"
                     }
                 }
             }
