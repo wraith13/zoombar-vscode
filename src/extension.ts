@@ -69,7 +69,6 @@ export module ZoomBar
 
     export function registerCommand(context : vscode.ExtensionContext): void
     {
-        console.log("zoombar.registerCommand();");
         context.subscriptions.push
         (
             vscode.commands.registerCommand
@@ -119,7 +118,6 @@ export module ZoomBar
 
     export async function selectZoom() : Promise<void>
     {
-        console.log("zoombar.selectZoom();");
         const currentZoom = roundZoom(levelToPercent(getZoomLevel()));
         const preset = getZoomPreset();
         const select = await vscode.window.showQuickPick
@@ -174,17 +172,14 @@ export module ZoomBar
     }
     export async function resetZoom() : Promise<void>
     {
-        console.log("zoombar.resetZoom();");
         setZoomLevel(percentToLevel(getDefaultZoom()));
     }
     export async function zoomOut() : Promise<void>
     {
-        console.log("zoombar.zoomOut();");
         setZoomLevel(getZoomLevel() -getZoomUnitLevel());
     }
     export async function zoomIn() : Promise<void>
     {
-        console.log("zoombar.zoomIn();");
         setZoomLevel(getZoomLevel() +getZoomUnitLevel());
     }
     export function updateIndicator() : void
