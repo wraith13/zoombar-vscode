@@ -16,11 +16,16 @@ suite("Extension Tests", () => {
 
     // Defines a Mocha unit test
     test("zoombar", () => {
-        assert.equal(100 * 100, Math.round(ZoomBar.ZoomBar.levelToPercent(0.0) *100.0));
-        assert.equal(120 * 100, Math.round(ZoomBar.ZoomBar.levelToPercent(1.0) *100.0));
-        assert.equal(144 * 100, Math.round(ZoomBar.ZoomBar.levelToPercent(2.0) *100.0));
-        assert.equal(0.0 * 100, Math.round(ZoomBar.ZoomBar.percentToLevel(100.0) *100.0));
-        assert.equal(1.0 * 100, Math.round(ZoomBar.ZoomBar.percentToLevel(120.0) *100.0));
-        assert.equal(2.0 * 100, Math.round(ZoomBar.ZoomBar.percentToLevel(144.0) *100.0));
+        assert.equal(100.0, ZoomBar.ZoomBar.roundZoom(99.999));
+        assert.equal(100.0, ZoomBar.ZoomBar.roundZoom(100.000));
+        assert.equal(100.0, ZoomBar.ZoomBar.roundZoom(100.001));
+        assert.equal(100.0, ZoomBar.ZoomBar.roundZoom(ZoomBar.ZoomBar.levelToPercent(0.0)));
+        assert.equal(120.0, ZoomBar.ZoomBar.roundZoom(ZoomBar.ZoomBar.levelToPercent(1.0)));
+        assert.equal(144.0, ZoomBar.ZoomBar.roundZoom(ZoomBar.ZoomBar.levelToPercent(2.0)));
+        assert.equal(0.0, ZoomBar.ZoomBar.roundZoom(ZoomBar.ZoomBar.percentToLevel(100.0)));
+        assert.equal(1.0, ZoomBar.ZoomBar.roundZoom(ZoomBar.ZoomBar.percentToLevel(120.0)));
+        assert.equal(2.0, ZoomBar.ZoomBar.roundZoom(ZoomBar.ZoomBar.percentToLevel(144.0)));
+        assert.equal("100%", ZoomBar.ZoomBar.percentToDisplayString(100.0, "ja-JP"));
+        assert.equal("1,000%", ZoomBar.ZoomBar.percentToDisplayString(1000.0, "ja-JP"));
     });
 });
