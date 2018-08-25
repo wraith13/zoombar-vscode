@@ -10,8 +10,9 @@ export module ZoomBar
     var zoomOutLabel : vscode.StatusBarItem;
     var zoomInLabel : vscode.StatusBarItem;
 
+    const cent = 100.0;
     const systemZoomUnit = 20.0;
-    const systemZoomUnitRate = (systemZoomUnit + 100.0) / 100.0;
+    const systemZoomUnitRate = (systemZoomUnit + cent) / cent;
     const zoomLog = Math.log(systemZoomUnitRate);
 
     function distinctFilter<type>(value : type, index : number, self : type[]) : boolean
@@ -44,7 +45,7 @@ export module ZoomBar
     }
     function getZoomUnitLevel() : number
     {
-        return percentToLevel(100.0 +getZoomUnit());
+        return percentToLevel(cent +getZoomUnit());
     }
     function getZoomPreset() : number[]
     {
@@ -227,19 +228,19 @@ export module ZoomBar
 
     export function levelToPercent(value : number) : number
     {
-        return Math.pow(systemZoomUnitRate, value) * 100.0;
+        return Math.pow(systemZoomUnitRate, value) * cent;
     }
     export function percentToLevel(value : number) : number
     {
-        return Math.log(value / 100.0) / zoomLog;
+        return Math.log(value / cent) / zoomLog;
     }
     export function roundZoom(value : number) : number
     {
-        return Math.round(value *100.0) /100.0;
+        return Math.round(value *cent) /cent;
     }
     export function percentToDisplayString(value : number, locales?: string | string[]) : string
     {
-        return `${roundZoom(value / 100.0).toLocaleString(locales, { style: "percent" })}`;
+        return `${roundZoom(value / cent).toLocaleString(locales, { style: "percent" })}`;
     }
 }
 
