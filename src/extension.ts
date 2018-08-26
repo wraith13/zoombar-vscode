@@ -49,15 +49,9 @@ export module ZoomBar
     }
     function getZoomPreset() : number[]
     {
-        var result = getConfiguration<number[]>("zoomPreset");
-
-        //  distinct
-        result = result.filter(distinctFilter);
-
-        //  sort
-        result.sort((a,b) => b - a);
-
-        return result;
+        return getConfiguration<number[]>("zoomPreset")
+            .filter(distinctFilter)
+            .sort((a,b) => b - a);
     }
     function getZoomInLabelText() : string
     {
@@ -197,13 +191,13 @@ export module ZoomBar
                 {
                     switch(i)
                     {
-                    case "+":
-                        zoomInLabel.text = getZoomInLabelText();
-                        zoomInLabel.show();
-                        break;
                     case "%":
                         zoomLabel.text = percentToDisplayString(levelToPercent(getZoomLevel()));
                         zoomLabel.show();
+                        break;
+                    case "+":
+                        zoomInLabel.text = getZoomInLabelText();
+                        zoomInLabel.show();
                         break;
                     case "-":
                         zoomOutLabel.text = getZoomOutLabelText();
@@ -212,13 +206,13 @@ export module ZoomBar
                     }
                 }
             );
-        if (uiDisplayOrder.indexOf("+") < 0)
-        {
-            zoomInLabel.hide();
-        }
         if (uiDisplayOrder.indexOf("%") < 0)
         {
             zoomLabel.hide();
+        }
+        if (uiDisplayOrder.indexOf("+") < 0)
+        {
+            zoomInLabel.hide();
         }
         if (uiDisplayOrder.indexOf("-") < 0)
         {
