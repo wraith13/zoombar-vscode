@@ -1,7 +1,7 @@
 {
     "name": "zoombar-vscode",
     "displayName": "Zoom Bar",
-    "description": "This Visual Studio Code Extension provides zooming UI in statusbar.",
+    "description": "This Visual Studio Code Extension provides zoom UI in status bar.",
     "icon": "images/zoomhex.128.png",
     "version": "0.0.1",
     "publisher": "wraith13",
