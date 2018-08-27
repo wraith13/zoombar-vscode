@@ -107,14 +107,13 @@ export module ZoomBar
         context.subscriptions.push(zoomInLabel);
         context.subscriptions.push(zoomOutLabel);
 
-        vscode.workspace.onDidChangeConfiguration(() => updateIndicator());
-        updateIndicator();
+        vscode.workspace.onDidChangeConfiguration(() => updateStatusBar());
+        updateStatusBar();
     }
 
     export async function selectZoom() : Promise<void>
     {
         const currentZoom = roundZoom(levelToPercent(getZoomLevel()));
-        const preset = getZoomPreset();
         const select = await vscode.window.showQuickPick
         (
             [
@@ -129,13 +128,13 @@ export module ZoomBar
                     detail: "*",
                 }
             ].concat(
-                preset.map
+                getZoomPreset().map
                 (
                     i => pass_through =
                     {
-                            label: percentToDisplayString(i),
-                            description: currentZoom === roundZoom(i) ? "(current)": "",
-                            detail: i.toString()
+                        label: percentToDisplayString(i),
+                        description: currentZoom === roundZoom(i) ? "(current)": "",
+                        detail: i.toString()
                     }
                 )
             ),
@@ -177,7 +176,7 @@ export module ZoomBar
     {
         setZoomLevel(getZoomLevel() +getZoomUnitLevel());
     }
-    export function updateIndicator() : void
+    export function updateStatusBar() : void
     {
         var uiDisplayOrder = getConfiguration<string>("uiDisplayOrder");
 

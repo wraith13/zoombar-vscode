@@ -4,6 +4,7 @@ out/test/**
 test/**
 src/**
 **/*.map
+.gitattributes
 .gitignore
 tsconfig.json
 vsc-extension-quickstart.md
@@ -13,5 +14,6 @@ images/zoomhex.1024.png
 images/zoomhex.ico
 .history/**
 private/**
+tsconfig.json
 tslint.json
 desktop.ini
