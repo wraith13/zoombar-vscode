@@ -127,7 +127,9 @@ export module ZoomBar
                     description: "",
                     detail: "*",
                 }
-            ].concat(
+            ]
+            .concat
+            (
                 getZoomPreset().map
                 (
                     i => pass_through =
