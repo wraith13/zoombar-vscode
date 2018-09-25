@@ -2,7 +2,7 @@
 
 [![Visual Studio Marketplace](https://vsmarketplacebadge.apphb.com/version/wraith13.zoombar-vscode.svg) ![installs](https://vsmarketplacebadge.apphb.com/installs/wraith13.zoombar-vscode.svg) ![rating](https://vsmarketplacebadge.apphb.com/rating/wraith13.zoombar-vscode.svg)](https://marketplace.visualstudio.com/items?itemName=wraith13.zoombar-vscode)
 
-This Visual Studio Code extension provides zoom UI in status bar.
+Zoom UI in status bar for vscode.
 
 ## Features
 
