@@ -50,7 +50,7 @@ This extension contributes the following settings by [`settings.json`](https://c
 
 ## Keyboard shortcut Settings
 
-In default, wandbox-vscode's commands doesn't apply keyboard shortcuts. Althogh,
+In default, Zoom bar's commands doesn't apply keyboard shortcuts. Althogh,
 you can apply keyboard shortcuts by [`keybindings.json`](https://code.visualstudio.com/docs/customization/keybindings#_customizing-shortcuts)
 ( Mac: <kbd>Code</kbd> -> <kbd>Preferences</kbd> -> <kbd>Keyboard Shortcuts</kbd>, Windows / Linux: <kbd>File</kbd> -> <kbd>Preferences</kbd> -> <kbd>Keyboard Shortcuts</kbd>).
 
