@@ -18,52 +18,26 @@ export module ZoomBar
     const systemZoomUnitRate = (systemZoomUnit + cent) / cent;
     const zoomLog = Math.log(systemZoomUnitRate);
 
-    function distinctFilter<type>(value : type, index : number, self : type[]) : boolean
-    {
-        return index === self.indexOf(value);
-    }
+    const distinctFilter = <type>(value : type, index : number, self : type[]) : boolean => index === self.indexOf(value);
 
-    function getConfiguration<type>(key? : string, section : string = "zoombar") : type
+    const getConfiguration = <type>(key? : string, section : string = "zoombar") : type =>
     {
         const configuration = vscode.workspace.getConfiguration(section);
         return key ?
             configuration[key] :
             configuration;
-    }
-    function getZoomLevel() : number
-    {
-        return getConfiguration<number>("zoomLevel", "window") || 0.0;
-    }
-    function setZoomLevel(zoomLevel : number) : void
-    {
-        vscode.workspace.getConfiguration("window").update("zoomLevel", zoomLevel, true);
-    }
-    function getDefaultZoom() : number
-    {
-        return getConfiguration<number>("defaultZoom");
-    }
-    function getZoomUnit() : number
-    {
-        return getConfiguration<number>("zoomUnit");
-    }
-    function getZoomUnitLevel() : number
-    {
-        return percentToLevel(cent +getZoomUnit());
-    }
-    function getZoomPreset() : number[]
-    {
-        return getConfiguration<number[]>("zoomPreset")
+    };
+    const getZoomLevel = () : number => getConfiguration<number>("zoomLevel", "window") || 0.0;
+    const setZoomLevel = (zoomLevel : number) : void => vscode.workspace.getConfiguration("window").update("zoomLevel", zoomLevel, true);
+
+    const getDefaultZoom = () : number => getConfiguration<number>("defaultZoom");
+    const getZoomUnit = () : number => getConfiguration<number>("zoomUnit");
+    const getZoomUnitLevel = () : number => percentToLevel(cent +getZoomUnit());
+    const getZoomPreset = () : number[] => getConfiguration<number[]>("zoomPreset")
             .filter(distinctFilter)
             .sort((a,b) => b - a);
-    }
-    function getZoomInLabelText() : string
-    {
-        return getConfiguration<string>("zoomInLabel");
-    }
-    function getZoomOutLabelText() : string
-    {
-        return getConfiguration<string>("zoomOutLabel");
-    }
+    const getZoomInLabelText = () : string => getConfiguration<string>("zoomInLabel");
+    const getZoomOutLabelText = () : string => getConfiguration<string>("zoomOutLabel");
 
     function createStatusBarItem
     (
@@ -191,18 +165,9 @@ export module ZoomBar
             }
         }
     }
-    export async function resetZoom() : Promise<void>
-    {
-        setZoomLevel(percentToLevel(getDefaultZoom()));
-    }
-    export async function zoomOut() : Promise<void>
-    {
-        setZoomLevel(getZoomLevel() -getZoomUnitLevel());
-    }
-    export async function zoomIn() : Promise<void>
-    {
-        setZoomLevel(getZoomLevel() +getZoomUnitLevel());
-    }
+    export const resetZoom = async () : Promise<void> => setZoomLevel(percentToLevel(getDefaultZoom()));
+    export const zoomOut = async () : Promise<void> => setZoomLevel(getZoomLevel() -getZoomUnitLevel());
+    export const zoomIn = async () : Promise<void> => setZoomLevel(getZoomLevel() +getZoomUnitLevel());
     export function updateStatusBar() : void
     {
         const uiDisplayOrder = getConfiguration<string>("uiDisplayOrder");
@@ -246,22 +211,10 @@ export module ZoomBar
         }
     }
 
-    export function levelToPercent(value : number) : number
-    {
-        return Math.pow(systemZoomUnitRate, value) * cent;
-    }
-    export function percentToLevel(value : number) : number
-    {
-        return Math.log(value / cent) / zoomLog;
-    }
-    export function roundZoom(value : number) : number
-    {
-        return Math.round(value *cent) /cent;
-    }
-    export function percentToDisplayString(value : number, locales?: string | string[]) : string
-    {
-        return `${roundZoom(value / cent).toLocaleString(locales, { style: "percent" })}`;
-    }
+    export const levelToPercent = (value : number) : number => Math.pow(systemZoomUnitRate, value) * cent;
+    export const percentToLevel = (value : number) : number => Math.log(value / cent) / zoomLog;
+    export const roundZoom = (value : number) : number => Math.round(value *cent) /cent;
+    export const percentToDisplayString = (value : number, locales?: string | string[]) : string =>`${roundZoom(value / cent).toLocaleString(locales, { style: "percent" })}`;
 }
 
 export function activate(context: vscode.ExtensionContext) : void
