@@ -5,10 +5,13 @@ import * as vscode from 'vscode';
 
 export module ZoomBar
 {
-    var pass_through;
-    var zoomLabel : vscode.StatusBarItem;
-    var zoomOutLabel : vscode.StatusBarItem;
-    var zoomInLabel : vscode.StatusBarItem;
+    let pass_through;
+    
+    const applicationKey = "zoombar-vscode";
+
+    let zoomLabel : vscode.StatusBarItem;
+    let zoomOutLabel : vscode.StatusBarItem;
+    let zoomInLabel : vscode.StatusBarItem;
 
     const cent = 100.0;
     const systemZoomUnit = 20.0;
@@ -94,10 +97,10 @@ export module ZoomBar
     {
         [
             //  コマンドの登録
-            vscode.commands.registerCommand('zoombar-vscode.selectZoom', selectZoom),
-            vscode.commands.registerCommand('zoombar-vscode.resetZoom', resetZoom),
-            vscode.commands.registerCommand('zoombar-vscode.zoomIn', zoomIn),
-            vscode.commands.registerCommand('zoombar-vscode.zoomOut', zoomOut),
+            vscode.commands.registerCommand(`${applicationKey}.selectZoom`, selectZoom),
+            vscode.commands.registerCommand(`${applicationKey}.resetZoom`, resetZoom),
+            vscode.commands.registerCommand(`${applicationKey}.zoomIn`, zoomIn),
+            vscode.commands.registerCommand(`${applicationKey}.zoomOut`, zoomOut),
 
             //  ステータスバーアイテムの登録
             zoomLabel = createStatusBarItem
@@ -105,7 +108,7 @@ export module ZoomBar
                 {
                     alignment: vscode.StatusBarAlignment.Right,
                     text: "zoom",
-                    command: "zoombar-vscode.selectZoom"
+                    command: `${applicationKey}.selectZoom`
                 }
             ),
             zoomInLabel = createStatusBarItem
@@ -113,7 +116,7 @@ export module ZoomBar
                 {
                     alignment: vscode.StatusBarAlignment.Right,
                     text: getZoomInLabelText(),
-                    command: "zoombar-vscode.zoomIn"
+                    command: `${applicationKey}.zoomIn`
                 }
             ),
             zoomOutLabel = createStatusBarItem
@@ -121,7 +124,7 @@ export module ZoomBar
                 {
                     alignment: vscode.StatusBarAlignment.Right,
                     text: getZoomOutLabelText(),
-                    command: "zoombar-vscode.zoomOut"
+                    command: `${applicationKey}.zoomOut`
                 }
             ),
 
@@ -202,7 +205,7 @@ export module ZoomBar
     }
     export function updateStatusBar() : void
     {
-        var uiDisplayOrder = getConfiguration<string>("uiDisplayOrder");
+        const uiDisplayOrder = getConfiguration<string>("uiDisplayOrder");
 
         uiDisplayOrder
             .split("")
