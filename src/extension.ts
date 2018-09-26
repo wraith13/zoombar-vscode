@@ -62,52 +62,74 @@ export module ZoomBar
         return getConfiguration<string>("zoomOutLabel");
     }
 
-    export function registerCommand(context : vscode.ExtensionContext): void
+    function createStatusBarItem
+    (
+        properties :
+        {
+            alignment ? : vscode.StatusBarAlignment,
+            text ? : string,
+            command ? : string,
+            tooltip ? : string
+        }
+    )
+    : vscode.StatusBarItem
     {
-        context.subscriptions.push
-        (
-            vscode.commands.registerCommand
-            (
-                'zoombar-vscode.selectZoom', selectZoom
-            )
-        );
-        context.subscriptions.push
-        (
-            vscode.commands.registerCommand
-            (
-                'zoombar-vscode.resetZoom', resetZoom
-            )
-        );
-        context.subscriptions.push
-        (
-            vscode.commands.registerCommand
-            (
-                'zoombar-vscode.zoomIn', zoomIn
-            )
-        );
-        context.subscriptions.push
-        (
-            vscode.commands.registerCommand
-            (
-                'zoombar-vscode.zoomOut', zoomOut
-            )
-        );
+        const result = vscode.window.createStatusBarItem(properties.alignment);
+        if (undefined !== properties.text)
+        {
+            result.text = properties.text;
+        }
+        if (undefined !== properties.command)
+        {
+            result.command = properties.command;
+        }
+        if (undefined !== properties.tooltip)
+        {
+            result.tooltip = properties.tooltip;
+        }
+        return result;
+    }
 
-        zoomLabel = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
-        zoomLabel.text = "zoom";
-        zoomLabel.command = "zoombar-vscode.selectZoom";
-        zoomInLabel = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
-        zoomInLabel.text = getZoomInLabelText();
-        zoomInLabel.command = "zoombar-vscode.zoomIn";
-        zoomOutLabel = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
-        zoomOutLabel.text = getZoomOutLabelText();
-        zoomOutLabel.command = "zoombar-vscode.zoomOut";
+    export function initialize(context : vscode.ExtensionContext): void
+    {
+        [
+            //  コマンドの登録
+            vscode.commands.registerCommand('zoombar-vscode.selectZoom', selectZoom),
+            vscode.commands.registerCommand('zoombar-vscode.resetZoom', resetZoom),
+            vscode.commands.registerCommand('zoombar-vscode.zoomIn', zoomIn),
+            vscode.commands.registerCommand('zoombar-vscode.zoomOut', zoomOut),
 
-        context.subscriptions.push(zoomLabel);
-        context.subscriptions.push(zoomInLabel);
-        context.subscriptions.push(zoomOutLabel);
+            //  ステータスバーアイテムの登録
+            zoomLabel = createStatusBarItem
+            (
+                {
+                    alignment: vscode.StatusBarAlignment.Right,
+                    text: "zoom",
+                    command: "zoombar-vscode.selectZoom"
+                }
+            ),
+            zoomInLabel = createStatusBarItem
+            (
+                {
+                    alignment: vscode.StatusBarAlignment.Right,
+                    text: getZoomInLabelText(),
+                    command: "zoombar-vscode.zoomIn"
+                }
+            ),
+            zoomOutLabel = createStatusBarItem
+            (
+                {
+                    alignment: vscode.StatusBarAlignment.Right,
+                    text: getZoomOutLabelText(),
+                    command: "zoombar-vscode.zoomOut"
+                }
+            ),
 
-        vscode.workspace.onDidChangeConfiguration(() => updateStatusBar());
+            //  イベントリスナーの登録
+            vscode.workspace.onDidChangeConfiguration(() => updateStatusBar())
+        ]
+        .forEach(i => context.subscriptions.push(i));
+
         updateStatusBar();
     }
 
@@ -241,7 +263,7 @@ export module ZoomBar
 
 export function activate(context: vscode.ExtensionContext) : void
 {
-    ZoomBar.registerCommand(context);
+    ZoomBar.initialize(context);
 }
 
 export function deactivate() : void
