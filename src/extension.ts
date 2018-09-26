@@ -147,7 +147,7 @@ export module ZoomBar
         {
             if ("*" === select.detail)
             {
-                let zoom : any = await vscode.window.showInputBox
+                const zoom : any = await vscode.window.showInputBox
                 (
                     {
                         prompt: "Input a zoom",
