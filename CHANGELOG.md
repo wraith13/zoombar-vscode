@@ -6,6 +6,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## 1.0.1 - 2018-??-??
 
+### Added
+
+- Set tooltip to status bar items.
+
 ### Fixed
 
 - fixed description mistake in README.md

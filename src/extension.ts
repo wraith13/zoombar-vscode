@@ -82,7 +82,8 @@ export module ZoomBar
                 {
                     alignment: vscode.StatusBarAlignment.Right,
                     text: "zoom",
-                    command: `${applicationKey}.selectZoom`
+                    command: `${applicationKey}.selectZoom`,
+                    tooltip: "Select Zoom"
                 }
             ),
             zoomInLabel = createStatusBarItem
@@ -90,7 +91,8 @@ export module ZoomBar
                 {
                     alignment: vscode.StatusBarAlignment.Right,
                     text: getZoomInLabelText(),
-                    command: `${applicationKey}.zoomIn`
+                    command: `${applicationKey}.zoomIn`,
+                    tooltip: "Zoom In"
                 }
             ),
             zoomOutLabel = createStatusBarItem
@@ -98,7 +100,8 @@ export module ZoomBar
                 {
                     alignment: vscode.StatusBarAlignment.Right,
                     text: getZoomOutLabelText(),
-                    command: `${applicationKey}.zoomOut`
+                    command: `${applicationKey}.zoomOut`,
+                    tooltip: "Zoom Out"
                 }
             ),
 
