@@ -48,6 +48,14 @@ This extension contributes the following settings by [`settings.json`](https://c
 * `zoombar.zoomOutLabel`: set zoom out's label
 * `zoombar.uiDisplayOrder`: set zoom UI display order
 
+You can embed icons in the label text( `zoombar.zoomInLabel`,  `zoombar.zoomOutLabel` ) by leveraging the syntax:
+
+`My text $(icon-name) contains icons like $(icon'name) this one.`
+
+Where the icon-name is taken from the [octicon](https://octicons.github.com) icon set, e.g. `light-bulb`, `thumbsup`, `zap` etc.
+
+You can specify unicode characters ( include emoji ) as label text too.
+
 ## Keyboard shortcut Settings
 
 In default, Zoom bar's commands doesn't apply keyboard shortcuts. Althogh,

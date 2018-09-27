@@ -9,6 +9,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ### Added
 
 - Set tooltip to status bar items.
+- description of octicons for label text in README.md
 
 ### Fixed
 
