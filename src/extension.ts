@@ -69,7 +69,8 @@ export module ZoomBar
 
     export function initialize(context : vscode.ExtensionContext): void
     {
-        [
+        context.subscriptions.push
+        (
             //  コマンドの登録
             vscode.commands.registerCommand(`${applicationKey}.selectZoom`, selectZoom),
             vscode.commands.registerCommand(`${applicationKey}.resetZoom`, resetZoom),
@@ -107,8 +108,7 @@ export module ZoomBar
 
             //  イベントリスナーの登録
             vscode.workspace.onDidChangeConfiguration(() => updateStatusBar())
-        ]
-        .forEach(i => context.subscriptions.push(i));
+        );
 
         updateStatusBar();
     }
