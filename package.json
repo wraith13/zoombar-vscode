@@ -12,7 +12,7 @@
     "bugs": {
         "url": "https://github.com/wraith13/zoombar-vscode/issues"
     },
-    "homepage": "https://github.com/wraith13/zoombar-vscode/blob/master/README.md",
+    "homepage": "https://github.com/wraith13/zoombar-vscode",
     "repository": {
         "type": "git",
         "url": "https://github.com/wraith13/zoombar-vscode.git"
