@@ -120,12 +120,12 @@ export module ZoomBar
         (
             [
                 {
-                    label: `Reset zoom`,
+                    label: `$(home) Reset zoom`,
                     description: "",
                     detail: getDefaultZoom().toString(),
                 },
                 {
-                    label: `Input zoom`,
+                    label: `$(pencil) Input zoom`,
                     description: "",
                     detail: "*",
                 }
@@ -136,7 +136,7 @@ export module ZoomBar
                 (
                     i => pass_through =
                     {
-                        label: percentToDisplayString(i),
+                        label: `$(telescope) ${percentToDisplayString(i)}`,
                         description: currentZoom === roundZoom(i) ? "(current)": "",
                         detail: i.toString()
                     }
