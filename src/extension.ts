@@ -120,14 +120,14 @@ export module ZoomBar
         (
             [
                 {
-                    label: `$(home) Reset zoom`,
+                    label: `$(home) Reset zoom ( ${percentToDisplayString(getDefaultZoom())} )`,
                     description: "",
-                    detail: getDefaultZoom().toString(),
+                    value: getDefaultZoom().toString(),
                 },
                 {
                     label: `$(pencil) Input zoom`,
                     description: "",
-                    detail: "*",
+                    value: "*",
                 }
             ]
             .concat
@@ -137,8 +137,8 @@ export module ZoomBar
                     i => pass_through =
                     {
                         label: `$(telescope) ${percentToDisplayString(i)}`,
-                        description: currentZoom === roundZoom(i) ? "(current)": "",
-                        detail: i.toString()
+                        description: currentZoom === roundZoom(i) ? "( current )": "",
+                        value: i.toString()
                     }
                 )
             ),
@@ -148,7 +148,7 @@ export module ZoomBar
         );
         if (select)
         {
-            if ("*" === select.detail)
+            if ("*" === select.value)
             {
                 const zoom : any = await vscode.window.showInputBox
                 (
@@ -164,7 +164,7 @@ export module ZoomBar
             }
             else
             {
-                setZoomLevel(percentToLevel(parseFloat(select.detail)));
+                setZoomLevel(percentToLevel(parseFloat(select.value)));
             }
         }
     }
