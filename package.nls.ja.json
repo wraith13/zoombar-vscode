@@ -1,0 +1,18 @@
+{
+    "zoombar-vscode.title": "ズームバー",
+    "zoombar-vscode.selectZoom.title": "ズームの選択",
+    "zoombar-vscode.resetZoom.title": "ズームのリセット",
+    "zoombar-vscode.zoomIn.title": "ズームイン",
+    "zoombar-vscode.zoomout.title": "ズームアウト",
+    "zoombar.defaultZoom.description": "デフォルトズーム( 小数点以下も指定できます。 )",
+    "zoombar.zoomUnit.description": "ズーム単位( 小数点以下も指定できます。 )",
+    "zoombar.zoomPreset.description": "ズームプリセット( 小数点以下も指定できます。 )",
+    "zoombar.zoomInLabel.description": "ズームインラベル",
+    "zoombar.zoomOutLabel.description": "ズームアウトラベル",
+    "zoombar.uiDisplayOrder.description": "ズームUI表示順",
+    "zoombar-vscode.selectZoom.resetZoom": "ズームをリセット",
+    "zoombar-vscode.selectZoom.inputZoom": "ズームを入力",
+    "zoombar-vscode.selectZoom.current": "( 現在 )",
+    "zoombar-vscode.selectZoom.placeHolder": "ズームを選択してください",
+    "zoombar-vscode.inputZoom.placeHolder": "ズームを入力してください"
+}
