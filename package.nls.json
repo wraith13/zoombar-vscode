@@ -1,0 +1,18 @@
+{
+    "zoombar-vscode.title": "Zoom Bar",
+    "zoombar-vscode.selectZoom.title": "Select Zoom",
+    "zoombar-vscode.resetZoom.title": "Reset Zoom",
+    "zoombar-vscode.zoomIn.title": "Zoom In",
+    "zoombar-vscode.zoomout.title": "Zoom Out",
+    "zoombar.defaultZoom.description": "default zoom ( can be specified below the decimal point. )",
+    "zoombar.zoomUnit.description": "zoom unit ( can be specified below the decimal point. )",
+    "zoombar.zoomPreset.description": "zoom preset ( can be specified below the decimal point. )",
+    "zoombar.zoomInLabel.description": "zoom in's label",
+    "zoombar.zoomOutLabel.description": "zoom out's label",
+    "zoombar.uiDisplayOrder.description": "zoom UI display order",
+    "zoombar-vscode.selectZoom.resetZoom": "Reset zoom",
+    "zoombar-vscode.selectZoom.inputZoom": "Input zoom",
+    "zoombar-vscode.selectZoom.current": "( current )",
+    "zoombar-vscode.selectZoom.placeHolder": "Select a zoom",
+    "zoombar-vscode.inputZoom.placeHolder": "Input a zoom"
+}

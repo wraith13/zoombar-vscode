@@ -33,38 +33,38 @@
         "commands": [
             {
                 "command": "zoombar-vscode.selectZoom",
-                "title": "Select Zoom",
-                "category": "Zoom Bar"
+                "title": "%zoombar-vscode.selectZoom.title%",
+                "category": "%zoombar-vscode.title%"
             },
             {
                 "command": "zoombar-vscode.resetZoom",
-                "title": "Reset Zoom",
-                "category": "Zoom Bar"
+                "title": "%zoombar-vscode.resetZoom.title%",
+                "category": "%zoombar-vscode.title%"
             },
             {
                 "command": "zoombar-vscode.zoomIn",
-                "title": "Zoom In",
-                "category": "Zoom Bar"
+                "title": "%zoombar-vscode.zoomIn.title%",
+                "category": "%zoombar-vscode.title%"
             },
             {
                 "command": "zoombar-vscode.zoomOut",
-                "title": "Zoom Out",
-                "category": "Zoom Bar"
+                "title": "%zoombar-vscode.zoomout.title%",
+                "category": "%zoombar-vscode.title%"
             }
         ],
         "configuration": [
             {
-                "title": "Zoom Bar",
+                "title": "%zoombar-vscode.title%",
                 "properties": {
                     "zoombar.defaultZoom": {
                         "type": "number",
                         "default": 100,
-                        "description": "default zoom ( can be specified below the decimal point. )"
+                        "description": "%zoombar.defaultZoom.description%"
                     },
                     "zoombar.zoomUnit": {
                         "type": "number",
                         "default": 10,
-                        "description": "zoom unit ( can be specified below the decimal point. )"
+                        "description": "%zoombar.zoomUnit.description%"
                     },
                     "zoombar.zoomPreset": {
                         "type": "array",
@@ -83,17 +83,17 @@
                             75,
                             50
                         ],
-                        "description": "zoom preset ( can be specified below the decimal point. )"
+                        "description": "%zoombar.zoomPreset.description%"
                     },
                     "zoombar.zoomInLabel": {
                         "type": "string",
                         "default": "+",
-                        "description": "zoom in's label"
+                        "description": "%zoombar.zoomInLabel.description%"
                     },
                     "zoombar.zoomOutLabel": {
                         "type": "string",
                         "default": "-",
-                        "description": "zoom out's label"
+                        "description": "%zoombar.zoomOutLabel.description%"
                     },
                     "zoombar.uiDisplayOrder": {
                         "type": "string",
@@ -110,7 +110,7 @@
                             "-+%"
                         ],
                         "default": "+%-",
-                        "description": "zoom UI display order"
+                        "description": "%zoombar.uiDisplayOrder.description%"
                     }
                 }
             }

@@ -3,6 +3,19 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
+import localeEn from "../package.nls.json";
+//import localeJa from "../package.nls.ja.json";
+
+interface LocaleEntry
+{
+    [key : string] : string;
+}
+const localeTableKey = <string>JSON.parse(<string>process.env.VSCODE_NLS_CONFIG).locale;
+const localeTable = Object.assign(localeEn, ((<{[key : string] : LocaleEntry}>{
+//    ja : localeJa
+})[localeTableKey] || { }));
+const localeString = (key : string) : string => localeTable[key] || key;
+
 export module ZoomBar
 {
     let pass_through;
@@ -84,7 +97,7 @@ export module ZoomBar
                     alignment: vscode.StatusBarAlignment.Right,
                     text: "zoom",
                     command: `${applicationKey}.selectZoom`,
-                    tooltip: "Select Zoom"
+                    tooltip: localeString("zoombar-vscode.selectZoom.title")
                 }
             ),
             zoomInLabel = createStatusBarItem
@@ -93,7 +106,7 @@ export module ZoomBar
                     alignment: vscode.StatusBarAlignment.Right,
                     text: getZoomInLabelText(),
                     command: `${applicationKey}.zoomIn`,
-                    tooltip: "Zoom In"
+                    tooltip: localeString("zoombar-vscode.zoomIn.title")
                 }
             ),
             zoomOutLabel = createStatusBarItem
@@ -102,7 +115,7 @@ export module ZoomBar
                     alignment: vscode.StatusBarAlignment.Right,
                     text: getZoomOutLabelText(),
                     command: `${applicationKey}.zoomOut`,
-                    tooltip: "Zoom Out"
+                    tooltip: localeString("zoombar-vscode.zoomout.title")
                 }
             ),
 
@@ -120,12 +133,12 @@ export module ZoomBar
         (
             [
                 {
-                    label: `$(home) Reset zoom ( ${percentToDisplayString(getDefaultZoom())} )`,
+                    label: `$(home) ${localeString("zoombar-vscode.selectZoom.resetZoom")} ( ${percentToDisplayString(getDefaultZoom())} )`,
                     description: "",
                     value: getDefaultZoom().toString(),
                 },
                 {
-                    label: `$(pencil) Input zoom`,
+                    label: `$(pencil) ${localeString("zoombar-vscode.selectZoom.inputZoom")}`,
                     description: "",
                     value: "*",
                 }
@@ -137,13 +150,13 @@ export module ZoomBar
                     i => pass_through =
                     {
                         label: `$(telescope) ${percentToDisplayString(i)}`,
-                        description: currentZoom === roundZoom(i) ? "( current )": "",
+                        description: currentZoom === roundZoom(i) ? localeString("zoombar-vscode.selectZoom.current"): "",
                         value: i.toString()
                     }
                 )
             ),
             {
-                placeHolder: "Select a zoom",
+                placeHolder: localeString("zoombar-vscode.selectZoom.placeHolder"),
             }
         );
         if (select)
@@ -153,7 +166,7 @@ export module ZoomBar
                 const zoom : any = await vscode.window.showInputBox
                 (
                     {
-                        prompt: "Input a zoom",
+                        prompt: localeString("zoombar-vscode.inputZoom.placeHolder"),
                         value: currentZoom.toString(),
                     }
                 );

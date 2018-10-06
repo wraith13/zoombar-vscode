@@ -27,7 +27,9 @@
         "skipLibCheck": false,
         "pretty": false,
         "noEmitOnError": true,
-        "rootDir": "."
+        "rootDir": ".",
+        "resolveJsonModule": true,
+        "esModuleInterop": true
     },
     "exclude": [
         "node_modules",
