@@ -4,6 +4,16 @@ All notable changes to the "zoombar-vscode" extension will be documented in this
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## 1.1.0 - 2018-10-07
+
+### Added
+
+- support Japanese.
+
+### Changed
+
+- improved display by showQuickPick().
+
 ## 1.0.1 - 2018-09-28
 
 ### Added
