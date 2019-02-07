@@ -149,7 +149,7 @@ export module ZoomBar
                 (
                     i => pass_through =
                     {
-                        label: `$(telescope) ${percentToDisplayString(i)}`,
+                        label: `$(text-size) ${percentToDisplayString(i)}`,
                         description: currentZoom === roundZoom(i) ? localeString("zoombar-vscode.selectZoom.current"): "",
                         value: i.toString()
                     }
