@@ -6,6 +6,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## 1.2.0 - 2019-02-??
 
+### Added
+
+- Added `Reset Font Zoom` status bar items.
+
 ### Changed
 
 - Changed octicon from $(telescope) to $(text-size) in display by showQuickPick().

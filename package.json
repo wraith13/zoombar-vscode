@@ -95,21 +95,45 @@
                         "default": "-",
                         "description": "%zoombar.zoomOutLabel.description%"
                     },
+                    "zoombar.fontZoomResetLabel": {
+                        "type": "string",
+                        "default": "$(text-size)",
+                        "description": "%zoombar.fontZoomResetLabel.description%"
+                    },
                     "zoombar.uiDisplayOrder": {
                         "type": "string",
                         "enum": [
                             "",
+                            "@",
                             "%",
+                            "@%",
+                            "%@",
                             "+-",
                             "-+",
+                            "@+-",
+                            "@-+",
+                            "+-@",
+                            "-+@",
                             "+%-",
                             "+-%",
                             "%+-",
                             "%-+",
                             "-%+",
-                            "-+%"
+                            "-+%",
+                            "@+%-",
+                            "@+-%",
+                            "@%+-",
+                            "@%-+",
+                            "@-%+",
+                            "@-+%",
+                            "+%-@",
+                            "+-%@",
+                            "%+-@",
+                            "%-+@",
+                            "-%+@",
+                            "-+%@"
                         ],
-                        "default": "+%-",
+                        "default": "@+%-",
                         "description": "%zoombar.uiDisplayOrder.description%"
                     }
                 }

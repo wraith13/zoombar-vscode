@@ -25,6 +25,7 @@ export module ZoomBar
     let zoomLabel : vscode.StatusBarItem;
     let zoomOutLabel : vscode.StatusBarItem;
     let zoomInLabel : vscode.StatusBarItem;
+    let fontZoomResetLabel : vscode.StatusBarItem;
 
     const cent = 100.0;
     const systemZoomUnit = 20.0;
@@ -33,15 +34,17 @@ export module ZoomBar
 
     const distinctFilter = <type>(value : type, index : number, self : type[]) : boolean => index === self.indexOf(value);
 
-    const getConfiguration = <type>(key? : string, section : string = "zoombar") : type =>
+    function getConfiguration<type = vscode.WorkspaceConfiguration>(key? : string, section : string = "zoombar") : type
     {
-        const configuration = vscode.workspace.getConfiguration(section);
-        return key ?
-            configuration[key] :
+        const rawKey = undefined === key ? undefined: key.split(".").reverse()[0];
+        const rawSection = undefined === key || rawKey === key ? section: `${section}.${key.replace(/(.*)\.[^\.]+/, "$1")}`;
+        const configuration = vscode.workspace.getConfiguration(rawSection);
+        return rawKey ?
+            configuration[rawKey] :
             configuration;
-    };
+    }
     const getZoomLevel = () : number => getConfiguration<number>("zoomLevel", "window") || 0.0;
-    const setZoomLevel = (zoomLevel : number) : void => vscode.workspace.getConfiguration("window").update("zoomLevel", zoomLevel, true);
+    const setZoomLevel = (zoomLevel : number) : void => getConfiguration(undefined, "window").update("zoomLevel", zoomLevel, true);
 
     const getDefaultZoom = () : number => getConfiguration<number>("defaultZoom");
     const getZoomUnit = () : number => getConfiguration<number>("zoomUnit");
@@ -51,6 +54,7 @@ export module ZoomBar
             .sort((a,b) => b - a);
     const getZoomInLabelText = () : string => getConfiguration<string>("zoomInLabel");
     const getZoomOutLabelText = () : string => getConfiguration<string>("zoomOutLabel");
+    const getFontZoomResetLabelText = () : string => getConfiguration<string>("fontZoomResetLabel");
 
     function createStatusBarItem
     (
@@ -116,6 +120,15 @@ export module ZoomBar
                     text: getZoomOutLabelText(),
                     command: `${applicationKey}.zoomOut`,
                     tooltip: localeString("zoombar-vscode.zoomout.title")
+                }
+            ),
+            fontZoomResetLabel = createStatusBarItem
+            (
+                {
+                    alignment: vscode.StatusBarAlignment.Right,
+                    text: getFontZoomResetLabelText(),
+                    command: `editor.action.fontZoomReset`,
+                    tooltip: localeString("zoombar-vscode.fontZoomReset.title")
                 }
             ),
 
@@ -210,6 +223,10 @@ export module ZoomBar
                         zoomOutLabel.text = getZoomOutLabelText();
                         zoomOutLabel.show();
                         break;
+                    case "@":
+                        fontZoomResetLabel.text = getFontZoomResetLabelText();
+                        fontZoomResetLabel.show();
+                        break;
                     }
                 }
             );
@@ -224,6 +241,10 @@ export module ZoomBar
         if (uiDisplayOrder.indexOf("-") < 0)
         {
             zoomOutLabel.hide();
+        }
+        if (uiDisplayOrder.indexOf("@") < 0)
+        {
+            fontZoomResetLabel.hide();
         }
     }
 
