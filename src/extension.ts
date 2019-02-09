@@ -151,6 +151,11 @@ export module ZoomBar
                     value: getDefaultZoom().toString(),
                 },
                 {
+                    label: `${getFontZoomResetLabelText()} ${localeString("zoombar-vscode.fontZoomReset.title")}`,
+                    description: "",
+                    value: "@",
+                },
+                {
                     label: `$(pencil) ${localeString("zoombar-vscode.selectZoom.inputZoom")}`,
                     description: "",
                     value: "*",
@@ -187,6 +192,11 @@ export module ZoomBar
                 {
                     setZoomLevel(percentToLevel(parseFloat(zoom)));
                 }
+            }
+            else
+            if ("@" === select.value)
+            {
+                vscode.commands.executeCommand(`editor.action.fontZoomReset`);
             }
             else
             {
