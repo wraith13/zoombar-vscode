@@ -10,8 +10,6 @@ Can zoom via GUI in status bar.
 
 ![screen shot](./images/screenshot.png)
 
-> Zoom Bar changes only `window.zoomLevel`, does not change editor font zoom.
-
 ## Tutorial
 
 ### 0. ⬇️ Install Zoom Bar
@@ -23,6 +21,8 @@ Show extension side bar within VS Code(Mac:<kbd>Command</kbd>+<kbd>Shift</kbd>+<
 Click `-` to zoom out, click `+` to zoom in. And click zoom percentage to show zoom menu.
 
 ![how to use](./images/how-to-use.png)
+
+![menu screen shot](./images/menu.png)
 
 ### 2. 🔧 Next step
 
@@ -46,6 +46,7 @@ This extension contributes the following settings by [`settings.json`](https://c
 * `zoombar.zoomPreset`: set zoom preset
 * `zoombar.zoomInLabel`: set zoom in's label
 * `zoombar.zoomOutLabel`: set zoom out's label
+* `zoombar.fontZoomResetLabel`: set `Editor Font Zoom Reset`'s label
 * `zoombar.uiDisplayOrder`: set zoom UI display order
 
 You can embed icons in the label text( `zoombar.zoomInLabel`,  `zoombar.zoomOutLabel` ) by leveraging the syntax:
