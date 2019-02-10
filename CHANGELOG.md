@@ -4,7 +4,7 @@ All notable changes to the "zoombar-vscode" extension will be documented in this
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## 1.2.0 - 2019-02-??
+## 1.2.0 - 2019-02-11
 
 ### Added
 
