@@ -18,8 +18,6 @@ const localeString = (key : string) : string => localeTable[key] || key;
 
 export module ZoomBar
 {
-    let pass_through;
-    
     const applicationKey = "zoombar-vscode";
 
     let zoomLabel : vscode.StatusBarItem;
