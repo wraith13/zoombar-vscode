@@ -163,12 +163,12 @@ export module ZoomBar
             (
                 getZoomPreset().map
                 (
-                    i => pass_through =
-                    {
+                    i =>
+                    ({
                         label: `$(text-size) ${percentToDisplayString(i)}`,
                         description: currentZoom === roundZoom(i) ? localeString("zoombar-vscode.selectZoom.current"): "",
                         value: i.toString()
-                    }
+                    })
                 )
             ),
             {
