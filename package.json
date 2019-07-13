@@ -148,10 +148,10 @@
     },
     "dependencies": {},
     "devDependencies": {
-        "typescript": "^2.9.2",
-        "vscode": "^1.1.21",
-        "mocha": "^2.3.3",
+        "@types/mocha": "^2.2.32",
         "@types/node": "^6.0.40",
-        "@types/mocha": "^2.2.32"
+        "mocha": "^6.1.4",
+        "typescript": "^2.9.2",
+        "vscode": "^1.1.35"
     }
 }
