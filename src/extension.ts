@@ -20,6 +20,8 @@ export module ZoomBar
 {
     const applicationKey = "zoombar-vscode";
 
+    let previousUiDisplayOrder = "";
+
     let zoomLabel : vscode.StatusBarItem;
     let zoomOutLabel : vscode.StatusBarItem;
     let zoomInLabel : vscode.StatusBarItem;
@@ -209,6 +211,15 @@ export module ZoomBar
     {
         const uiDisplayOrder = getConfiguration<string>("uiDisplayOrder");
 
+        if (previousUiDisplayOrder !== uiDisplayOrder)
+        {
+            zoomLabel.hide();
+            zoomInLabel.hide();
+            zoomOutLabel.hide();
+            fontZoomResetLabel.hide();
+            previousUiDisplayOrder = uiDisplayOrder;
+        }
+
         uiDisplayOrder
             .split("")
             .filter(distinctFilter)
@@ -238,22 +249,6 @@ export module ZoomBar
                     }
                 }
             );
-        if (uiDisplayOrder.indexOf("%") < 0)
-        {
-            zoomLabel.hide();
-        }
-        if (uiDisplayOrder.indexOf("+") < 0)
-        {
-            zoomInLabel.hide();
-        }
-        if (uiDisplayOrder.indexOf("-") < 0)
-        {
-            zoomOutLabel.hide();
-        }
-        if (uiDisplayOrder.indexOf("@") < 0)
-        {
-            fontZoomResetLabel.hide();
-        }
     }
 
     export const levelToPercent = (value : number) : number => Math.pow(systemZoomUnitRate, value) * cent;

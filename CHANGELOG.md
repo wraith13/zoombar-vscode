@@ -4,6 +4,12 @@ All notable changes to the "zoombar-vscode" extension will be documented in this
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## 1.2.1 - 2019-07-??
+
+### Fixed
+
+- Fixed an issue that the order of the items on the status bar was broken with VS Code v1.36 or later.
+
 ## 1.2.0 - 2019-02-11
 
 ### Added
