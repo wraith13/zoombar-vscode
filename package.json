@@ -3,7 +3,7 @@
     "displayName": "Zoom Bar",
     "description": "Zoom UI in status bar for vscode.",
     "icon": "images/zoomhex.128.png",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "publisher": "wraith13",
     "license": "SEE LICENSE IN LICENSE_1_0.txt",
     "engines": {
