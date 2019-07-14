@@ -44,7 +44,7 @@ export module ZoomBar
             configuration;
     }
     const getZoomLevel = () : number => getConfiguration<number>("zoomLevel", "window") || 0.0;
-    const setZoomLevel = (zoomLevel : number) : void => getConfiguration(undefined, "window").update("zoomLevel", zoomLevel, true);
+    const setZoomLevel = (zoomLevel : number) : Thenable<void> => getConfiguration(undefined, "window").update("zoomLevel", zoomLevel, true);
 
     const getDefaultZoom = () : number => getConfiguration<number>("defaultZoom");
     const getZoomUnit = () : number => getConfiguration<number>("zoomUnit");
@@ -190,23 +190,23 @@ export module ZoomBar
                 );
                 if (undefined !== zoom)
                 {
-                    setZoomLevel(percentToLevel(parseFloat(zoom)));
+                    await setZoomLevel(percentToLevel(parseFloat(zoom)));
                 }
             }
             else
             if ("@" === select.value)
             {
-                vscode.commands.executeCommand(`editor.action.fontZoomReset`);
+                await vscode.commands.executeCommand(`editor.action.fontZoomReset`);
             }
             else
             {
-                setZoomLevel(percentToLevel(parseFloat(select.value)));
+                await setZoomLevel(percentToLevel(parseFloat(select.value)));
             }
         }
     }
-    export const resetZoom = async () : Promise<void> => setZoomLevel(percentToLevel(getDefaultZoom()));
-    export const zoomOut = async () : Promise<void> => setZoomLevel(getZoomLevel() -getZoomUnitLevel());
-    export const zoomIn = async () : Promise<void> => setZoomLevel(getZoomLevel() +getZoomUnitLevel());
+    export const resetZoom = () : Thenable<void> => setZoomLevel(percentToLevel(getDefaultZoom()));
+    export const zoomOut = () : Thenable<void> => setZoomLevel(getZoomLevel() -getZoomUnitLevel());
+    export const zoomIn = () : Thenable<void> => setZoomLevel(getZoomLevel() +getZoomUnitLevel());
     export function updateStatusBar() : void
     {
         const uiDisplayOrder = getConfiguration<string>("uiDisplayOrder");
