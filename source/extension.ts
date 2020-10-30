@@ -1,40 +1,40 @@
 'use strict';
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-
 import localeEn from "../package.nls.json";
 import localeJa from "../package.nls.ja.json";
-
 interface LocaleEntry
 {
     [key : string] : string;
 }
 const localeTableKey = <string>JSON.parse(<string>process.env.VSCODE_NLS_CONFIG).locale;
-const localeTable = Object.assign(localeEn, ((<{[key : string] : LocaleEntry}>{
-    ja : localeJa
-})[localeTableKey] || { }));
+const localeTable = Object.assign
+(
+    localeEn,
+    (
+        (
+            <{[key : string] : LocaleEntry}>
+            {
+                ja : localeJa
+            }
+        )
+        [localeTableKey] || { }
+    )
+);
 const localeString = (key : string) : string => localeTable[key] || key;
-
 export module ZoomBar
 {
     const applicationKey = "zoombar-vscode";
-
     let previousUiDisplayOrder = "";
-
     let zoomLabel : vscode.StatusBarItem;
     let zoomOutLabel : vscode.StatusBarItem;
     let zoomInLabel : vscode.StatusBarItem;
     let fontZoomResetLabel : vscode.StatusBarItem;
-
     const cent = 100.0;
     const systemZoomUnit = 20.0;
     const systemZoomUnitRate = (systemZoomUnit + cent) / cent;
     const zoomLog = Math.log(systemZoomUnitRate);
-
     const distinctFilter = <type>(value : type, index : number, self : type[]) : boolean => index === self.indexOf(value);
-
-    function getConfiguration<type = vscode.WorkspaceConfiguration>(key? : string, section : string = "zoombar") : type
+    const getConfiguration = <type = vscode.WorkspaceConfiguration>(key? : string, section : string = "zoombar") : type =>
     {
         const rawKey = undefined === key ? undefined: key.split(".").reverse()[0];
         const rawSection = undefined === key || rawKey === key ? section: `${section}.${key.replace(/(.*)\.[^\.]+/, "$1")}`;
@@ -42,7 +42,7 @@ export module ZoomBar
         return rawKey ?
             configuration[rawKey] :
             configuration;
-    }
+    };
     const getZoomLevel = () : number => getConfiguration<number>("zoomLevel", "window") || 0.0;
     const setZoomLevel = (zoomLevel : number) : Thenable<void> => getConfiguration(undefined, "window").update("zoomLevel", zoomLevel, true);
 
@@ -55,8 +55,7 @@ export module ZoomBar
     const getZoomInLabelText = () : string => getConfiguration<string>("zoomInLabel");
     const getZoomOutLabelText = () : string => getConfiguration<string>("zoomOutLabel");
     const getFontZoomResetLabelText = () : string => getConfiguration<string>("fontZoomResetLabel");
-
-    function createStatusBarItem
+    const createStatusBarItem =
     (
         properties :
         {
@@ -66,7 +65,7 @@ export module ZoomBar
             tooltip ? : string
         }
     )
-    : vscode.StatusBarItem
+    : vscode.StatusBarItem =>
     {
         const result = vscode.window.createStatusBarItem(properties.alignment);
         if (undefined !== properties.text)
@@ -83,8 +82,7 @@ export module ZoomBar
         }
         return result;
     }
-
-    export function initialize(context : vscode.ExtensionContext): void
+    export const initialize = (context : vscode.ExtensionContext): void =>
     {
         context.subscriptions.push
         (
@@ -93,53 +91,41 @@ export module ZoomBar
             vscode.commands.registerCommand(`${applicationKey}.resetZoom`, resetZoom),
             vscode.commands.registerCommand(`${applicationKey}.zoomIn`, zoomIn),
             vscode.commands.registerCommand(`${applicationKey}.zoomOut`, zoomOut),
-
             //  ステータスバーアイテムの登録
             zoomLabel = createStatusBarItem
-            (
-                {
-                    alignment: vscode.StatusBarAlignment.Right,
-                    text: "zoom",
-                    command: `${applicationKey}.selectZoom`,
-                    tooltip: localeString("zoombar-vscode.selectZoom.title")
-                }
-            ),
+            ({
+                alignment: vscode.StatusBarAlignment.Right,
+                text: "zoom",
+                command: `${applicationKey}.selectZoom`,
+                tooltip: localeString("zoombar-vscode.selectZoom.title")
+            }),
             zoomInLabel = createStatusBarItem
-            (
-                {
-                    alignment: vscode.StatusBarAlignment.Right,
-                    text: getZoomInLabelText(),
-                    command: `${applicationKey}.zoomIn`,
-                    tooltip: localeString("zoombar-vscode.zoomIn.title")
-                }
-            ),
+            ({
+                alignment: vscode.StatusBarAlignment.Right,
+                text: getZoomInLabelText(),
+                command: `${applicationKey}.zoomIn`,
+                tooltip: localeString("zoombar-vscode.zoomIn.title")
+            }),
             zoomOutLabel = createStatusBarItem
-            (
-                {
-                    alignment: vscode.StatusBarAlignment.Right,
-                    text: getZoomOutLabelText(),
-                    command: `${applicationKey}.zoomOut`,
-                    tooltip: localeString("zoombar-vscode.zoomout.title")
-                }
-            ),
+            ({
+                alignment: vscode.StatusBarAlignment.Right,
+                text: getZoomOutLabelText(),
+                command: `${applicationKey}.zoomOut`,
+                tooltip: localeString("zoombar-vscode.zoomout.title")
+            }),
             fontZoomResetLabel = createStatusBarItem
-            (
-                {
-                    alignment: vscode.StatusBarAlignment.Right,
-                    text: getFontZoomResetLabelText(),
-                    command: `editor.action.fontZoomReset`,
-                    tooltip: localeString("zoombar-vscode.fontZoomReset.title")
-                }
-            ),
-
+            ({
+                alignment: vscode.StatusBarAlignment.Right,
+                text: getFontZoomResetLabelText(),
+                command: `editor.action.fontZoomReset`,
+                tooltip: localeString("zoombar-vscode.fontZoomReset.title")
+            }),
             //  イベントリスナーの登録
             vscode.workspace.onDidChangeConfiguration(() => updateStatusBar())
         );
-
         updateStatusBar();
-    }
-
-    export async function selectZoom() : Promise<void>
+    };
+    export const selectZoom = async () : Promise<void> =>
     {
         const currentZoom = roundZoom(levelToPercent(getZoomLevel()));
         const select = await vscode.window.showQuickPick
@@ -182,12 +168,10 @@ export module ZoomBar
             if ("*" === select.value)
             {
                 const zoom : any = await vscode.window.showInputBox
-                (
-                    {
-                        prompt: localeString("zoombar-vscode.inputZoom.placeHolder"),
-                        value: currentZoom.toString(),
-                    }
-                );
+                ({
+                    prompt: localeString("zoombar-vscode.inputZoom.placeHolder"),
+                    value: currentZoom.toString(),
+                });
                 if (undefined !== zoom)
                 {
                     await setZoomLevel(percentToLevel(parseFloat(zoom)));
@@ -203,14 +187,13 @@ export module ZoomBar
                 await setZoomLevel(percentToLevel(parseFloat(select.value)));
             }
         }
-    }
+    };
     export const resetZoom = () : Thenable<void> => setZoomLevel(percentToLevel(getDefaultZoom()));
     export const zoomOut = () : Thenable<void> => setZoomLevel(getZoomLevel() -getZoomUnitLevel());
     export const zoomIn = () : Thenable<void> => setZoomLevel(getZoomLevel() +getZoomUnitLevel());
-    export function updateStatusBar() : void
+    export const updateStatusBar = () : void =>
     {
         const uiDisplayOrder = getConfiguration<string>("uiDisplayOrder");
-
         if (previousUiDisplayOrder !== uiDisplayOrder)
         {
             zoomLabel.hide();
@@ -219,7 +202,6 @@ export module ZoomBar
             fontZoomResetLabel.hide();
             previousUiDisplayOrder = uiDisplayOrder;
         }
-
         uiDisplayOrder
             .split("")
             .filter(distinctFilter)
@@ -249,19 +231,11 @@ export module ZoomBar
                     }
                 }
             );
-    }
-
+    };
     export const levelToPercent = (value : number) : number => Math.pow(systemZoomUnitRate, value) * cent;
     export const percentToLevel = (value : number) : number => Math.log(value / cent) / zoomLog;
     export const roundZoom = (value : number) : number => Math.round(value *cent) /cent;
     export const percentToDisplayString = (value : number, locales?: string | string[]) : string =>`${roundZoom(value / cent).toLocaleString(locales, { style: "percent" })}`;
 }
-
-export function activate(context: vscode.ExtensionContext) : void
-{
-    ZoomBar.initialize(context);
-}
-
-export function deactivate() : void
-{
-}
+export const activate = (context: vscode.ExtensionContext) : void => ZoomBar.initialize(context);
+export const deactivate = () : void => { };
