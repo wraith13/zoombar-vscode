@@ -1,7 +1,7 @@
 'use strict';
 import * as vscode from 'vscode';
 import * as vscel from '@wraith13/vscel';
-//import packageJson from "../package.json";
+import packageJson from "../package.json";
 import localeEn from "../package.nls.json";
 import localeJa from "../package.nls.ja.json";
 const locale = vscel.locale.make(localeEn, { "ja": localeJa });
@@ -18,27 +18,23 @@ export module ZoomBar
     const systemZoomUnitRate = (systemZoomUnit + cent) / cent;
     const zoomLog = Math.log(systemZoomUnitRate);
     const distinctFilter = <type>(value : type, index : number, self : type[]) : boolean => index === self.indexOf(value);
-    const getConfiguration = <type = vscode.WorkspaceConfiguration>(key? : string, section : string = "zoombar") : type =>
+    const getZoomLevel = () : number => vscode.workspace.getConfiguration("window")["zoomLevel"] ?? 0.0;
+    const setZoomLevel = (zoomLevel : number) : Thenable<void> => vscode.workspace.getConfiguration("window").update("zoomLevel", zoomLevel, true);
+    module Config
     {
-        const rawKey = undefined === key ? undefined: key.split(".").reverse()[0];
-        const rawSection = undefined === key || rawKey === key ? section: `${section}.${key.replace(/(.*)\.[^\.]+/, "$1")}`;
-        const configuration = vscode.workspace.getConfiguration(rawSection);
-        return rawKey ?
-            configuration[rawKey] :
-            configuration;
-    };
-    const getZoomLevel = () : number => getConfiguration<number>("zoomLevel", "window") || 0.0;
-    const setZoomLevel = (zoomLevel : number) : Thenable<void> => getConfiguration(undefined, "window").update("zoomLevel", zoomLevel, true);
-
-    const getDefaultZoom = () : number => getConfiguration<number>("defaultZoom");
-    const getZoomUnit = () : number => getConfiguration<number>("zoomUnit");
-    const getZoomUnitLevel = () : number => percentToLevel(cent +getZoomUnit());
-    const getZoomPreset = () : number[] => getConfiguration<number[]>("zoomPreset")
+        export const root = vscel.config.makeRoot(packageJson);
+        export const defaultZoom = root.makeEntry<number>("zoombar.defaultZoom");
+        export const zoomUnit = root.makeEntry<number>("zoombar.zoomUnit");
+        export const zoomPreset = root.makeEntry<number[]>("zoombar.zoomPreset");
+        export const zoomInLabel = root.makeEntry<string>("zoombar.zoomInLabel");
+        export const zoomOutLabel = root.makeEntry<string>("zoombar.zoomOutLabel");
+        export const fontZoomResetLabel = root.makeEntry<string>("zoombar.fontZoomResetLabel");
+        export const uiDisplayOrder = root.makeEntry<string>("zoombar.uiDisplayOrder");
+    }
+    const getZoomUnitLevel = () : number => percentToLevel(cent +Config.zoomUnit.get(""));
+    const getZoomPreset = () : number[] => Config.zoomPreset.get("")
             .filter(distinctFilter)
             .sort((a,b) => b - a);
-    const getZoomInLabelText = () : string => getConfiguration<string>("zoomInLabel");
-    const getZoomOutLabelText = () : string => getConfiguration<string>("zoomOutLabel");
-    const getFontZoomResetLabelText = () : string => getConfiguration<string>("fontZoomResetLabel");
     export const initialize = (context : vscode.ExtensionContext): void =>
     {
         context.subscriptions.push
@@ -59,26 +55,40 @@ export module ZoomBar
             zoomInLabel = vscel.statusbar.createItem
             ({
                 alignment: vscode.StatusBarAlignment.Right,
-                text: getZoomInLabelText(),
+                text: Config.zoomInLabel.get(""),
                 command: `${applicationKey}.zoomIn`,
                 tooltip: locale.map("zoombar-vscode.zoomIn.title")
             }),
             zoomOutLabel = vscel.statusbar.createItem
             ({
                 alignment: vscode.StatusBarAlignment.Right,
-                text: getZoomOutLabelText(),
+                text: Config.zoomOutLabel.get(""),
                 command: `${applicationKey}.zoomOut`,
                 tooltip: locale.map("zoombar-vscode.zoomout.title")
             }),
             fontZoomResetLabel = vscel.statusbar.createItem
             ({
                 alignment: vscode.StatusBarAlignment.Right,
-                text: getFontZoomResetLabelText(),
+                text: Config.fontZoomResetLabel.get(""),
                 command: `editor.action.fontZoomReset`,
                 tooltip: locale.map("zoombar-vscode.fontZoomReset.title")
             }),
             //  イベントリスナーの登録
-            vscode.workspace.onDidChangeConfiguration(() => updateStatusBar())
+            vscode.workspace.onDidChangeConfiguration
+            (
+                event =>
+                {
+                    if
+                    (
+                        event.affectsConfiguration("zoombar") ||
+                        event.affectsConfiguration("window.zoomLevel")
+                    )
+                    {
+                        Config.root.entries.forEach(i => i.clear());
+                        updateStatusBar()
+                    }
+                }
+            )
         );
         updateStatusBar();
     };
@@ -89,12 +99,12 @@ export module ZoomBar
         (
             [
                 {
-                    label: `$(home) ${locale.map("zoombar-vscode.selectZoom.resetZoom")} ( ${percentToDisplayString(getDefaultZoom())} )`,
+                    label: `$(home) ${locale.map("zoombar-vscode.selectZoom.resetZoom")} ( ${percentToDisplayString(Config.defaultZoom.get(""))} )`,
                     description: "",
-                    command: async () => await setZoomLevel(percentToLevel(getDefaultZoom())),
+                    command: async () => await setZoomLevel(percentToLevel(Config.defaultZoom.get(""))),
                 },
                 {
-                    label: `${getFontZoomResetLabelText()} ${locale.map("zoombar-vscode.fontZoomReset.title")}`,
+                    label: `${Config.fontZoomResetLabel.get("")} ${locale.map("zoombar-vscode.fontZoomReset.title")}`,
                     description: "",
                     command: async () => await vscode.commands.executeCommand(`editor.action.fontZoomReset`),
                 },
@@ -129,12 +139,12 @@ export module ZoomBar
             }
         );
     };
-    export const resetZoom = () : Thenable<void> => setZoomLevel(percentToLevel(getDefaultZoom()));
+    export const resetZoom = () : Thenable<void> => setZoomLevel(percentToLevel(Config.defaultZoom.get("")));
     export const zoomOut = () : Thenable<void> => setZoomLevel(getZoomLevel() -getZoomUnitLevel());
     export const zoomIn = () : Thenable<void> => setZoomLevel(getZoomLevel() +getZoomUnitLevel());
     export const updateStatusBar = () : void =>
     {
-        const uiDisplayOrder = getConfiguration<string>("uiDisplayOrder");
+        const uiDisplayOrder = Config.uiDisplayOrder.get("");
         if (previousUiDisplayOrder !== uiDisplayOrder)
         {
             zoomLabel.hide();
@@ -158,15 +168,15 @@ export module ZoomBar
                         zoomLabel.show();
                         break;
                     case "+":
-                        zoomInLabel.text = getZoomInLabelText();
+                        zoomInLabel.text = Config.zoomInLabel.get("");
                         zoomInLabel.show();
                         break;
                     case "-":
-                        zoomOutLabel.text = getZoomOutLabelText();
+                        zoomOutLabel.text = Config.zoomOutLabel.get("");
                         zoomOutLabel.show();
                         break;
                     case "@":
-                        fontZoomResetLabel.text = getFontZoomResetLabelText();
+                        fontZoomResetLabel.text = Config.fontZoomResetLabel.get("");
                         fontZoomResetLabel.show();
                         break;
                     }
