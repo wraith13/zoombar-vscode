@@ -1,26 +1,10 @@
 'use strict';
 import * as vscode from 'vscode';
+import * as vscel from '@wraith13/vscel';
+//import packageJson from "../package.json";
 import localeEn from "../package.nls.json";
 import localeJa from "../package.nls.ja.json";
-interface LocaleEntry
-{
-    [key : string] : string;
-}
-const localeTableKey = <string>JSON.parse(<string>process.env.VSCODE_NLS_CONFIG).locale;
-const localeTable = Object.assign
-(
-    localeEn,
-    (
-        (
-            <{[key : string] : LocaleEntry}>
-            {
-                ja : localeJa
-            }
-        )
-        [localeTableKey] || { }
-    )
-);
-const localeString = (key : string) : string => localeTable[key] || key;
+const locale = vscel.locale.make(localeEn, { "ja": localeJa });
 export module ZoomBar
 {
     const applicationKey = "zoombar-vscode";
@@ -55,33 +39,6 @@ export module ZoomBar
     const getZoomInLabelText = () : string => getConfiguration<string>("zoomInLabel");
     const getZoomOutLabelText = () : string => getConfiguration<string>("zoomOutLabel");
     const getFontZoomResetLabelText = () : string => getConfiguration<string>("fontZoomResetLabel");
-    const createStatusBarItem =
-    (
-        properties :
-        {
-            alignment ? : vscode.StatusBarAlignment,
-            text ? : string,
-            command ? : string,
-            tooltip ? : string
-        }
-    )
-    : vscode.StatusBarItem =>
-    {
-        const result = vscode.window.createStatusBarItem(properties.alignment);
-        if (undefined !== properties.text)
-        {
-            result.text = properties.text;
-        }
-        if (undefined !== properties.command)
-        {
-            result.command = properties.command;
-        }
-        if (undefined !== properties.tooltip)
-        {
-            result.tooltip = properties.tooltip;
-        }
-        return result;
-    }
     export const initialize = (context : vscode.ExtensionContext): void =>
     {
         context.subscriptions.push
@@ -92,33 +49,33 @@ export module ZoomBar
             vscode.commands.registerCommand(`${applicationKey}.zoomIn`, zoomIn),
             vscode.commands.registerCommand(`${applicationKey}.zoomOut`, zoomOut),
             //  ステータスバーアイテムの登録
-            zoomLabel = createStatusBarItem
+            zoomLabel = vscel.statusbar.createItem
             ({
                 alignment: vscode.StatusBarAlignment.Right,
                 text: "zoom",
                 command: `${applicationKey}.selectZoom`,
-                tooltip: localeString("zoombar-vscode.selectZoom.title")
+                tooltip: locale.map("zoombar-vscode.selectZoom.title")
             }),
-            zoomInLabel = createStatusBarItem
+            zoomInLabel = vscel.statusbar.createItem
             ({
                 alignment: vscode.StatusBarAlignment.Right,
                 text: getZoomInLabelText(),
                 command: `${applicationKey}.zoomIn`,
-                tooltip: localeString("zoombar-vscode.zoomIn.title")
+                tooltip: locale.map("zoombar-vscode.zoomIn.title")
             }),
-            zoomOutLabel = createStatusBarItem
+            zoomOutLabel = vscel.statusbar.createItem
             ({
                 alignment: vscode.StatusBarAlignment.Right,
                 text: getZoomOutLabelText(),
                 command: `${applicationKey}.zoomOut`,
-                tooltip: localeString("zoombar-vscode.zoomout.title")
+                tooltip: locale.map("zoombar-vscode.zoomout.title")
             }),
-            fontZoomResetLabel = createStatusBarItem
+            fontZoomResetLabel = vscel.statusbar.createItem
             ({
                 alignment: vscode.StatusBarAlignment.Right,
                 text: getFontZoomResetLabelText(),
                 command: `editor.action.fontZoomReset`,
-                tooltip: localeString("zoombar-vscode.fontZoomReset.title")
+                tooltip: locale.map("zoombar-vscode.fontZoomReset.title")
             }),
             //  イベントリスナーの登録
             vscode.workspace.onDidChangeConfiguration(() => updateStatusBar())
@@ -128,23 +85,31 @@ export module ZoomBar
     export const selectZoom = async () : Promise<void> =>
     {
         const currentZoom = roundZoom(levelToPercent(getZoomLevel()));
-        const select = await vscode.window.showQuickPick
+        await vscel.menu.showQuickPick
         (
             [
                 {
-                    label: `$(home) ${localeString("zoombar-vscode.selectZoom.resetZoom")} ( ${percentToDisplayString(getDefaultZoom())} )`,
+                    label: `$(home) ${locale.map("zoombar-vscode.selectZoom.resetZoom")} ( ${percentToDisplayString(getDefaultZoom())} )`,
                     description: "",
-                    value: getDefaultZoom().toString(),
+                    command: async () => await setZoomLevel(percentToLevel(getDefaultZoom())),
                 },
                 {
-                    label: `${getFontZoomResetLabelText()} ${localeString("zoombar-vscode.fontZoomReset.title")}`,
+                    label: `${getFontZoomResetLabelText()} ${locale.map("zoombar-vscode.fontZoomReset.title")}`,
                     description: "",
-                    value: "@",
+                    command: async () => await vscode.commands.executeCommand(`editor.action.fontZoomReset`),
                 },
                 {
-                    label: `$(pencil) ${localeString("zoombar-vscode.selectZoom.inputZoom")}`,
+                    label: `$(pencil) ${locale.map("zoombar-vscode.selectZoom.inputZoom")}`,
                     description: "",
-                    value: "*",
+                    command: async () =>
+                    {
+                        vscel.menu.showInputBox
+                        ({
+                            prompt: locale.map("zoombar-vscode.inputZoom.placeHolder"),
+                            value: currentZoom.toString(),
+                            command: async (input) => await setZoomLevel(percentToLevel(parseFloat(input))),
+                        });
+                    },
                 }
             ]
             .concat
@@ -154,39 +119,15 @@ export module ZoomBar
                     i =>
                     ({
                         label: `$(text-size) ${percentToDisplayString(i)}`,
-                        description: currentZoom === roundZoom(i) ? localeString("zoombar-vscode.selectZoom.current"): "",
-                        value: i.toString()
+                        description: currentZoom === roundZoom(i) ? locale.map("zoombar-vscode.selectZoom.current"): "",
+                        command: async () => await setZoomLevel(percentToLevel(i)),
                     })
                 )
             ),
             {
-                placeHolder: localeString("zoombar-vscode.selectZoom.placeHolder"),
+                placeHolder: locale.map("zoombar-vscode.selectZoom.placeHolder"),
             }
         );
-        if (select)
-        {
-            if ("*" === select.value)
-            {
-                const zoom : any = await vscode.window.showInputBox
-                ({
-                    prompt: localeString("zoombar-vscode.inputZoom.placeHolder"),
-                    value: currentZoom.toString(),
-                });
-                if (undefined !== zoom)
-                {
-                    await setZoomLevel(percentToLevel(parseFloat(zoom)));
-                }
-            }
-            else
-            if ("@" === select.value)
-            {
-                await vscode.commands.executeCommand(`editor.action.fontZoomReset`);
-            }
-            else
-            {
-                await setZoomLevel(percentToLevel(parseFloat(select.value)));
-            }
-        }
     };
     export const resetZoom = () : Thenable<void> => setZoomLevel(percentToLevel(getDefaultZoom()));
     export const zoomOut = () : Thenable<void> => setZoomLevel(getZoomLevel() -getZoomUnitLevel());
