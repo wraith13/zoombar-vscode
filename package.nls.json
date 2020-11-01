@@ -16,5 +16,7 @@
     "zoombar-vscode.selectZoom.inputZoom": "Input zoom",
     "zoombar-vscode.selectZoom.current": "( current )",
     "zoombar-vscode.selectZoom.placeHolder": "Select a zoom",
-    "zoombar-vscode.inputZoom.placeHolder": "Input a zoom"
+    "zoombar-vscode.inputZoom.placeHolder": "Input a zoom",
+    "Must be a number.": "Must be a number.",
+    "Range": "Range"
 }

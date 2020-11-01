@@ -16,5 +16,7 @@
     "zoombar-vscode.selectZoom.inputZoom": "ズームを入力",
     "zoombar-vscode.selectZoom.current": "( 現在 )",
     "zoombar-vscode.selectZoom.placeHolder": "ズームを選択してください",
-    "zoombar-vscode.inputZoom.placeHolder": "ズームを入力してください"
+    "zoombar-vscode.inputZoom.placeHolder": "ズームを入力してください",
+    "Must be a number.": "数値を指定してください。",
+    "Range": "範囲"
 }

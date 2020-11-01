@@ -117,6 +117,22 @@ export module ZoomBar
                         ({
                             prompt: locale.map("zoombar-vscode.inputZoom.placeHolder"),
                             value: currentZoom.toString(),
+                            validateInput: input =>
+                            {
+                                const value = parseFloat(input);
+                                if ( ! isFinite(value))
+                                {
+                                    return locale.map("Must be a number.");
+                                }
+                                const maxUnit = 4.0;
+                                const min = 100 /maxUnit;
+                                const max = 100 *maxUnit;
+                                if ( ! (min <= value && value <= max))
+                                {
+                                    return `${locale.map("Range")}: ${min} - ${max}`;
+                                }
+                                return undefined;
+                            },
                             command: async (input) => await setZoomLevel(percentToLevel(parseFloat(input))),
                         });
                     },
