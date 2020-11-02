@@ -18,8 +18,64 @@ export module ZoomBar
     const systemZoomUnitRate = (systemZoomUnit + cent) / cent;
     const zoomLog = Math.log(systemZoomUnitRate);
     const distinctFilter = <type>(value : type, index : number, self : type[]) : boolean => index === self.indexOf(value);
-    const getZoomLevel = () : number => vscode.workspace.getConfiguration("window")["zoomLevel"] ?? 0.0;
-    const setZoomLevel = (zoomLevel : number) : Thenable<void> => vscode.workspace.getConfiguration("window").update("zoomLevel", zoomLevel, true);
+    interface SetZoomEntry
+    {
+        zoomLevel : number,
+        resolve: () => void,
+        rejct: () => void,
+        timer: NodeJS.Timeout,
+    };
+    let waitingSetZoomEntry: SetZoomEntry | undefined  = undefined;
+    export const timeout = (wait: number) => new Promise((resolve) => setTimeout(resolve, wait));
+    export const setZoomLevel = async (zoomLevel : number, wait = 500) => new Promise
+    (
+        async (resolve, rejct) =>
+        {
+            if (waitingSetZoomEntry)
+            {
+                clearTimeout(waitingSetZoomEntry.timer);
+                waitingSetZoomEntry.rejct();
+                waitingSetZoomEntry = undefined;
+            }
+            const timer: NodeJS.Timeout = setTimeout
+            (
+                async () =>
+                {
+                    const i = waitingSetZoomEntry;
+                    if (i)
+                    {
+                        waitingSetZoomEntry = undefined;
+                        try
+                        {
+                            await vscode.workspace.getConfiguration("window").update
+                            (
+                                "zoomLevel",
+                                i.zoomLevel,
+                                true
+                            );
+                            i.resolve();
+                        }
+                        catch
+                        {
+                            i.rejct();
+                        }
+                    }
+                },
+                wait
+            );
+            waitingSetZoomEntry =
+            {
+                zoomLevel,
+                resolve,
+                rejct,
+                timer,
+            };
+        }
+    );
+    const getZoomLevel = () : number =>
+        waitingSetZoomEntry?.zoomLevel ??
+        vscode.workspace.getConfiguration("window")["zoomLevel"] ??
+        0.0;
     module Config
     {
         export const root = vscel.config.makeRoot(packageJson);
