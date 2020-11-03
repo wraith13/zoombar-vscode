@@ -26,7 +26,6 @@ export module ZoomBar
         timer: NodeJS.Timeout,
     };
     let waitingSetZoomEntry: SetZoomEntry | undefined  = undefined;
-    export const timeout = (wait: number) => new Promise((resolve) => setTimeout(resolve, wait));
     export const setZoomLevel = async (zoomLevel : number, wait = 500) => new Promise
     (
         async (resolve, rejct) =>
@@ -81,6 +80,7 @@ export module ZoomBar
         export const root = vscel.config.makeRoot(packageJson);
         export const defaultZoom = root.makeEntry<number>("zoombar.defaultZoom");
         export const zoomUnit = root.makeEntry<number>("zoombar.zoomUnit");
+        export const preview = root.makeEntry<boolean>("zoombar.preview");
         export const zoomPreset = root.makeEntry<number[]>("zoombar.zoomPreset");
         export const zoomInLabel = root.makeEntry<string>("zoombar.zoomInLabel");
         export const zoomOutLabel = root.makeEntry<string>("zoombar.zoomOutLabel");
@@ -150,18 +150,21 @@ export module ZoomBar
     };
     export const selectZoom = async () : Promise<void> =>
     {
-        const currentZoom = roundZoom(levelToPercent(getZoomLevel()));
+        const currentZoomLevel = getZoomLevel();
+        const currentZoom = roundZoom(levelToPercent(currentZoomLevel));
+        const preview = Config.preview.get("");
+        const rollback = async () => await setZoomLevel(currentZoomLevel);
         await vscel.menu.showQuickPick
         (
             [
                 {
                     label: `$(home) ${locale.map("zoombar-vscode.selectZoom.resetZoom")} ( ${percentToDisplayString(Config.defaultZoom.get(""))} )`,
                     description: "",
-                    command: async () => await setZoomLevel(percentToLevel(Config.defaultZoom.get(""))),
+                    preview: async () => await setZoomLevel(percentToLevel(Config.defaultZoom.get(""))),
                 },
                 {
                     label: `${Config.fontZoomResetLabel.get("")} ${locale.map("zoombar-vscode.fontZoomReset.title")}`,
-                    description: "",
+                    description: locale.map("No preview"),
                     command: async () => await vscode.commands.executeCommand(`editor.action.fontZoomReset`),
                 },
                 {
@@ -189,7 +192,9 @@ export module ZoomBar
                                 }
                                 return undefined;
                             },
-                            command: async (input) => await setZoomLevel(percentToLevel(parseFloat(input))),
+                            preview,
+                            command: async input => await setZoomLevel(percentToLevel(parseFloat(input))),
+                            onCancel: rollback,
                         });
                     },
                 }
@@ -202,12 +207,14 @@ export module ZoomBar
                     ({
                         label: `$(text-size) ${percentToDisplayString(i)}`,
                         description: currentZoom === roundZoom(i) ? locale.map("zoombar-vscode.selectZoom.current"): "",
-                        command: async () => await setZoomLevel(percentToLevel(i)),
+                        preview: async () => await setZoomLevel(percentToLevel(i)),
                     })
                 )
             ),
             {
                 placeHolder: locale.map("zoombar-vscode.selectZoom.placeHolder"),
+                preview,
+                rollback,
             }
         );
     };

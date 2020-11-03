@@ -8,7 +8,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ### Added
 
+- Preview support in `Select Zoom` and `Input a zoom`.
 - `Input a zoom` validater.
+
+### Changed
+
+- Increased the default preset values.
 
 ## 1.2.1 - 2019-07-14
 

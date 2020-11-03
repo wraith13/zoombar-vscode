@@ -66,6 +66,11 @@
                         "default": 10,
                         "description": "%zoombar.zoomUnit.description%"
                     },
+                    "zoombar.preview": {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "%zoombar.preview.description%"
+                    },
                     "zoombar.zoomPreset": {
                         "type": "array",
                         "items": {
@@ -73,14 +78,22 @@
                         },
                         "default": [
                             300,
+                            250,
                             200,
+                            175,
                             150,
+                            140,
+                            130,
                             120,
                             110,
+                            105,
                             100,
+                            95,
                             90,
                             80,
                             75,
+                            70,
+                            60,
                             50
                         ],
                         "description": "%zoombar.zoomPreset.description%"

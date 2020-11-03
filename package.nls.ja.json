@@ -7,6 +7,7 @@
     "zoombar-vscode.fontZoomReset.title": "エディターのフォントのズームをリセット",
     "zoombar.defaultZoom.description": "デフォルトズーム( 小数点以下も指定できます。 )",
     "zoombar.zoomUnit.description": "ズーム単位( 小数点以下も指定できます。 )",
+    "zoombar.preview.description": "ズームを確定前に仮適用します。",
     "zoombar.zoomPreset.description": "ズームプリセット( 小数点以下も指定できます。 )",
     "zoombar.zoomInLabel.description": "ズームインラベル",
     "zoombar.zoomOutLabel.description": "ズームアウトラベル",
@@ -18,5 +19,6 @@
     "zoombar-vscode.selectZoom.placeHolder": "ズームを選択してください",
     "zoombar-vscode.inputZoom.placeHolder": "ズームを入力してください",
     "Must be a number.": "数値を指定してください。",
-    "Range": "範囲"
+    "Range": "範囲",
+    "No preview": "プレビューなし"
 }
