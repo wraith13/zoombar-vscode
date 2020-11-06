@@ -20,11 +20,11 @@ export module ZoomBar
     const distinctFilter = <type>(value : type, index : number, self : type[]) : boolean => index === self.indexOf(value);
     interface SetZoomEntry
     {
-        zoomLevel : number,
-        resolve: () => void,
-        rejct: () => void,
-        timer: NodeJS.Timeout,
-    };
+        zoomLevel : number;
+        resolve: () => void;
+        rejct: () => void;
+        timer: NodeJS.Timeout;
+    }
     let waitingSetZoomEntry: SetZoomEntry | undefined  = undefined;
     export const setZoomLevel = async (zoomLevel : number, wait = 500) => new Promise
     (
@@ -75,6 +75,24 @@ export module ZoomBar
         waitingSetZoomEntry?.zoomLevel ??
         vscode.workspace.getConfiguration("window")["zoomLevel"] ??
         0.0;
+    const configurationTargetObject = Object.freeze
+    ({
+        "auto":
+        {
+            getZoomLevel,
+            setZoomLevel,
+        },
+        "global":
+        {
+            getZoomLevel,
+            setZoomLevel,
+        },
+        "workspace":
+        {
+            getZoomLevel,
+            setZoomLevel,
+        },
+    });
     module Config
     {
         export const root = vscel.config.makeRoot(packageJson);
@@ -86,6 +104,7 @@ export module ZoomBar
         export const zoomOutLabel = root.makeEntry<string>("zoombar.zoomOutLabel");
         export const fontZoomResetLabel = root.makeEntry<string>("zoombar.fontZoomResetLabel");
         export const uiDisplayOrder = root.makeEntry<string>("zoombar.uiDisplayOrder");
+        export const configurationTarget = root.makeMapEntry("zoombar.configurationTarget", configurationTargetObject);
     }
     const getZoomUnitLevel = () : number => percentToLevel(cent +Config.zoomUnit.get(""));
     const getZoomPreset = () : number[] => Config.zoomPreset.get("")
@@ -141,7 +160,7 @@ export module ZoomBar
                     )
                     {
                         Config.root.entries.forEach(i => i.clear());
-                        updateStatusBar()
+                        updateStatusBar();
                     }
                 }
             )

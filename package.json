@@ -59,17 +59,20 @@
                     "zoombar.defaultZoom": {
                         "type": "number",
                         "default": 100,
-                        "description": "%zoombar.defaultZoom.description%"
+                        "description": "%zoombar.defaultZoom.description%",
+                        "scope": "window"
                     },
                     "zoombar.zoomUnit": {
                         "type": "number",
                         "default": 10,
-                        "description": "%zoombar.zoomUnit.description%"
+                        "description": "%zoombar.zoomUnit.description%",
+                        "scope": "window"
                     },
                     "zoombar.preview": {
                         "type": "boolean",
                         "default": true,
-                        "description": "%zoombar.preview.description%"
+                        "description": "%zoombar.preview.description%",
+                        "scope": "window"
                     },
                     "zoombar.zoomPreset": {
                         "type": "array",
@@ -96,22 +99,26 @@
                             60,
                             50
                         ],
-                        "description": "%zoombar.zoomPreset.description%"
+                        "description": "%zoombar.zoomPreset.description%",
+                        "scope": "window"
                     },
                     "zoombar.zoomInLabel": {
                         "type": "string",
                         "default": "+",
-                        "description": "%zoombar.zoomInLabel.description%"
+                        "description": "%zoombar.zoomInLabel.description%",
+                        "scope": "window"
                     },
                     "zoombar.zoomOutLabel": {
                         "type": "string",
                         "default": "-",
-                        "description": "%zoombar.zoomOutLabel.description%"
+                        "description": "%zoombar.zoomOutLabel.description%",
+                        "scope": "window"
                     },
                     "zoombar.fontZoomResetLabel": {
                         "type": "string",
                         "default": "$(text-size)",
-                        "description": "%zoombar.fontZoomResetLabel.description%"
+                        "description": "%zoombar.fontZoomResetLabel.description%",
+                        "scope": "window"
                     },
                     "zoombar.uiDisplayOrder": {
                         "type": "string",
@@ -147,7 +154,25 @@
                             "-+%@"
                         ],
                         "default": "@+%-",
-                        "description": "%zoombar.uiDisplayOrder.description%"
+                        "description": "%zoombar.uiDisplayOrder.description%",
+                        "scope": "window"
+                    },
+                    "zoombar.configurationTarget":
+                    {
+                        "type": "string",
+                        "default": "auto",
+                        "enum": [
+                            "auto",
+                            "global",
+                            "workspace"
+                        ],
+                        "description": "%zoombar.configurationTarget.description%",
+                        "enumDescriptions": [
+                            "%zoombar.configurationTarget.auto%",
+                            "%zoombar.configurationTarget.global%",
+                            "%zoombar.configurationTarget.workspace%"
+                        ],
+                        "scope": "window"
                     }
                 }
             }
