@@ -8,6 +8,45 @@ const locale = vscel.locale.make(localeEn, { "ja": localeJa });
 export module ZoomBar
 {
     const applicationKey = "zoombar-vscode";
+    const hasWokspaceZoomLevel = () =>
+        undefined !== vscode.workspace.getConfiguration("window").inspect("zoomLevel")?.workspaceValue;
+    const configurationTargetObject = Object.freeze
+    ({
+        "auto": async () =>
+        {
+            return ! hasWokspaceZoomLevel();
+        },
+        "global": async () =>
+        {
+            if (hasWokspaceZoomLevel())
+            {
+                await vscode.workspace.getConfiguration("window").update
+                (
+                    "zoomLevel",
+                    undefined,
+                    false
+                );
+            }
+            return true;
+        },
+        "workspace": async () =>
+        {
+            return false;
+        },
+    });
+    module Config
+    {
+        export const root = vscel.config.makeRoot(packageJson);
+        export const defaultZoom = root.makeEntry<number>("zoombar.defaultZoom");
+        export const zoomUnit = root.makeEntry<number>("zoombar.zoomUnit");
+        export const preview = root.makeEntry<boolean>("zoombar.preview");
+        export const zoomPreset = root.makeEntry<number[]>("zoombar.zoomPreset");
+        export const zoomInLabel = root.makeEntry<string>("zoombar.zoomInLabel");
+        export const zoomOutLabel = root.makeEntry<string>("zoombar.zoomOutLabel");
+        export const fontZoomResetLabel = root.makeEntry<string>("zoombar.fontZoomResetLabel");
+        export const uiDisplayOrder = root.makeEntry<string>("zoombar.uiDisplayOrder");
+        export const configurationTarget = root.makeMapEntry("zoombar.configurationTarget", configurationTargetObject);
+    }
     let previousUiDisplayOrder = "";
     let zoomLabel : vscode.StatusBarItem;
     let zoomOutLabel : vscode.StatusBarItem;
@@ -50,7 +89,7 @@ export module ZoomBar
                             (
                                 "zoomLevel",
                                 i.zoomLevel,
-                                true
+                                await Config.configurationTarget.get("")()
                             );
                             i.resolve();
                         }
@@ -75,37 +114,6 @@ export module ZoomBar
         waitingSetZoomEntry?.zoomLevel ??
         vscode.workspace.getConfiguration("window")["zoomLevel"] ??
         0.0;
-    const configurationTargetObject = Object.freeze
-    ({
-        "auto":
-        {
-            getZoomLevel,
-            setZoomLevel,
-        },
-        "global":
-        {
-            getZoomLevel,
-            setZoomLevel,
-        },
-        "workspace":
-        {
-            getZoomLevel,
-            setZoomLevel,
-        },
-    });
-    module Config
-    {
-        export const root = vscel.config.makeRoot(packageJson);
-        export const defaultZoom = root.makeEntry<number>("zoombar.defaultZoom");
-        export const zoomUnit = root.makeEntry<number>("zoombar.zoomUnit");
-        export const preview = root.makeEntry<boolean>("zoombar.preview");
-        export const zoomPreset = root.makeEntry<number[]>("zoombar.zoomPreset");
-        export const zoomInLabel = root.makeEntry<string>("zoombar.zoomInLabel");
-        export const zoomOutLabel = root.makeEntry<string>("zoombar.zoomOutLabel");
-        export const fontZoomResetLabel = root.makeEntry<string>("zoombar.fontZoomResetLabel");
-        export const uiDisplayOrder = root.makeEntry<string>("zoombar.uiDisplayOrder");
-        export const configurationTarget = root.makeMapEntry("zoombar.configurationTarget", configurationTargetObject);
-    }
     const getZoomUnitLevel = () : number => percentToLevel(cent +Config.zoomUnit.get(""));
     const getZoomPreset = () : number[] => Config.zoomPreset.get("")
             .filter(distinctFilter)
