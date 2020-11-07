@@ -9,7 +9,9 @@ export module ZoomBar
 {
     const applicationKey = "zoombar-vscode";
     const hasWokspaceZoomLevel = () =>
-        undefined !== vscode.workspace.getConfiguration("window").inspect("zoomLevel")?.workspaceValue;
+        undefined !== vscode.workspace.getConfiguration("window")
+            .inspect("zoomLevel")
+            ?.workspaceValue;
     const configurationTargetObject = Object.freeze
     ({
         "auto": async () =>
@@ -31,7 +33,7 @@ export module ZoomBar
         },
         "workspace": async () =>
         {
-            return false;
+            return (vscode.workspace.workspaceFolders?.length ?? 0) <= 0;
         },
     });
     module Config

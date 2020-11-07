@@ -49,6 +49,7 @@ This extension contributes the following settings by [`settings.json`](https://c
 * `zoombar.zoomOutLabel`: set zoom out's label
 * `zoombar.fontZoomResetLabel`: set `Editor Font Zoom Reset`'s label
 * `zoombar.uiDisplayOrder`: set zoom UI display order
+* `zoombar.configurationTarget`: configuration target scope.
 
 You can embed icons in the label text( `zoombar.zoomInLabel`,  `zoombar.zoomOutLabel` ) by leveraging the syntax:
 

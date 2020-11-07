@@ -168,9 +168,9 @@
                         ],
                         "description": "%zoombar.configurationTarget.description%",
                         "enumDescriptions": [
-                            "%zoombar.configurationTarget.auto%",
-                            "%zoombar.configurationTarget.global%",
-                            "%zoombar.configurationTarget.workspace%"
+                            "%zoombar.configurationTarget.auto.description%",
+                            "%zoombar.configurationTarget.global.description%",
+                            "%zoombar.configurationTarget.workspace.description%"
                         ],
                         "scope": "window"
                     }
