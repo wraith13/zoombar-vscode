@@ -57,15 +57,28 @@ export module ZoomBar
     const systemZoomUnitRate = (systemZoomUnit + cent) / cent;
     const zoomLog = Math.log(systemZoomUnitRate);
     const distinctFilter = <type>(value : type, index : number, self : type[]) : boolean => index === self.indexOf(value);
+    interface InspectResult<T>
+    {
+        //key: string;
+        //defaultValue?: T;
+        globalValue?: T;
+        workspaceValue?: T;
+        //workspaceFolderValue?: T;
+        //defaultLanguageValue?: T;
+        //globalLanguageValue?: T;
+        //workspaceLanguageValue?: T;
+        //workspaceFolderLanguageValue?: T;
+        //languageIds?: string[];
+    }
     interface SetZoomEntry
     {
-        zoomLevel : number;
+        zoomLevel : number | InspectResult<number>;
         resolve: () => void;
         rejct: () => void;
         timer: NodeJS.Timeout;
     }
     let waitingSetZoomEntry: SetZoomEntry | undefined  = undefined;
-    export const setZoomLevel = async (zoomLevel : number, wait = 500) => new Promise
+    export const setZoomLevel = async (zoomLevel : number | InspectResult<number>, wait = 500) => new Promise
     (
         async (resolve, rejct) =>
         {
@@ -85,12 +98,34 @@ export module ZoomBar
                         waitingSetZoomEntry = undefined;
                         try
                         {
-                            await vscode.workspace.getConfiguration("window").update
-                            (
-                                "zoomLevel",
-                                i.zoomLevel,
-                                await Config.configurationTarget.get("")()
-                            );
+                            if (undefined !== i.zoomLevel)
+                            {
+                                if ("number" === typeof i.zoomLevel)
+                                {
+                                    await vscode.workspace.getConfiguration("window").update
+                                    (
+                                        "zoomLevel",
+                                        i.zoomLevel,
+                                        await Config.configurationTarget.get("")()
+                                    );
+                                }
+                                else
+                                {
+                                    const inspectResult = <InspectResult<number>>i.zoomLevel;
+                                    await vscode.workspace.getConfiguration("window").update
+                                    (
+                                        "zoomLevel",
+                                        inspectResult.globalValue,
+                                        true
+                                    );
+                                    await vscode.workspace.getConfiguration("window").update
+                                    (
+                                        "zoomLevel",
+                                        inspectResult.workspaceValue,
+                                        false
+                                    );
+                                }
+                            }
                             i.resolve();
                         }
                         catch
@@ -177,10 +212,11 @@ export module ZoomBar
     };
     export const selectZoom = async () : Promise<void> =>
     {
+        const backup = <InspectResult<number>>vscode.workspace.getConfiguration("window").inspect("zoomLevel");
         const currentZoomLevel = getZoomLevel();
         const currentZoom = roundZoom(levelToPercent(currentZoomLevel));
         const preview = Config.preview.get("");
-        const rollback = async () => await setZoomLevel(currentZoomLevel);
+        const rollback = async () => await setZoomLevel(backup);
         await vscel.menu.showQuickPick
         (
             [
