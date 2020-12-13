@@ -157,8 +157,7 @@
                         "description": "%zoombar.uiDisplayOrder.description%",
                         "scope": "window"
                     },
-                    "zoombar.configurationTarget":
-                    {
+                    "zoombar.configurationTarget": {
                         "type": "string",
                         "default": "auto",
                         "enum": [
@@ -200,6 +199,6 @@
         "vscode-test": "^1.4.0"
     },
     "dependencies": {
-        "@wraith13/vscel": "0.0.28"
+        "@wraith13/vscel": "0.0.39"
     }
 }
