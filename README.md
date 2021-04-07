@@ -69,10 +69,10 @@ Command name on `keybindings.json` is diffarent from on Command Pallete. See bel
 
 |on Command Pallete|on keybindings.json|
 |-|-|
-|`Zoom Bar: Select Zoom`|`zoombar.selectZoom`|
-|`Zoom Bar: Reset Zoom`|`zoombar.resetZoom`|
-|`Zoom Bar: Zoom In`|`zoombar.zoomIn`|
-|`Zoom Bar: Zoom Out`|`zoombar.zoomOut`|
+|`Zoom Bar: Select Zoom`|`zoombar-vscode.selectZoom`|
+|`Zoom Bar: Reset Zoom`|`zoombar-vscode.resetZoom`|
+|`Zoom Bar: Zoom In`|`zoombar-vscode.zoomIn`|
+|`Zoom Bar: Zoom Out`|`zoombar-vscode.zoomOut`|
 
 ## Release Notes
 

@@ -4,6 +4,10 @@ All notable changes to the "zoombar-vscode" extension will be documented in this
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## 1.4.1 - 2021-??-??
+
+- Fixed description mistake in README.md ( https://github.com/wraith13/zoombar-vscode/issues/5 )
+
 ## 1.4.0 - 2020-11-08
 
 - `zoombar.configurationTarget` setting item.
