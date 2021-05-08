@@ -6,13 +6,19 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## 1.4.1 - 2021-??-??
 
+### Fixed
+
 - Fixed description mistake in README.md ( https://github.com/wraith13/zoombar-vscode/issues/5 )
+
+### Security
+
+- npm audit fix
 
 ## 1.4.0 - 2020-11-08
 
-- `zoombar.configurationTarget` setting item.
-
 ### Added
+
+- `zoombar.configurationTarget` setting item.
 
 ## 1.3.0 - 2020-11-04
 
