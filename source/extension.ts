@@ -8,46 +8,60 @@ const locale = vscel.locale.make(localeEn, { "ja": localeJa });
 export module ZoomBar
 {
     const applicationKey = "zoombar-vscode";
-    const hasWokspaceZoomLevel = () =>
-        undefined !== vscode.workspace.getConfiguration("window")
-            .inspect("zoomLevel")
-            ?.workspaceValue;
     const configurationTargetObject = Object.freeze
     ({
         "auto": async () =>
-        {
-            return ! hasWokspaceZoomLevel();
-        },
+            undefined !== Config.zoomLevel.inspect()?.workspaceValue ?
+                {
+                    scope: vscel.config.Scope.rootWorkspace,
+                    target: vscode.ConfigurationTarget.Workspace,
+                }:
+                {
+                    scope: vscel.config.Scope.user,
+                    target: vscode.ConfigurationTarget.Global,
+                },
         "global": async () =>
         {
-            if (hasWokspaceZoomLevel())
+            if (undefined !== Config.zoomLevel.inspect(vscel.config.Scope.rootWorkspace)?.workspaceValue)
             {
-                await vscode.workspace.getConfiguration("window").update
+                await Config.zoomLevel.set
                 (
-                    "zoomLevel",
                     undefined,
-                    false
+                    vscel.config.Scope.rootWorkspace,
+                    vscode.ConfigurationTarget.Workspace
                 );
             }
-            return true;
+            const result =
+            {
+                scope: vscel.config.Scope.user,
+                target: vscode.ConfigurationTarget.Global,
+            };
+            return result;
         },
         "workspace": async () =>
-        {
-            return (vscode.workspace.workspaceFolders?.length ?? 0) <= 0;
-        },
+            (vscode.workspace.workspaceFolders?.length ?? 0) <= 0 ?
+                {
+                    scope: vscel.config.Scope.user,
+                    target: vscode.ConfigurationTarget.Global,
+                }:
+                {
+                    scope: vscel.config.Scope.rootWorkspace,
+                    target: vscode.ConfigurationTarget.Workspace,
+                },
     });
     module Config
     {
         export const root = vscel.config.makeRoot(packageJson);
-        export const defaultZoom = root.makeEntry<number>("zoombar.defaultZoom");
-        export const zoomUnit = root.makeEntry<number>("zoombar.zoomUnit");
-        export const preview = root.makeEntry<boolean>("zoombar.preview");
-        export const zoomPreset = root.makeEntry<number[]>("zoombar.zoomPreset");
-        export const zoomInLabel = root.makeEntry<string>("zoombar.zoomInLabel");
-        export const zoomOutLabel = root.makeEntry<string>("zoombar.zoomOutLabel");
-        export const fontZoomResetLabel = root.makeEntry<string>("zoombar.fontZoomResetLabel");
-        export const uiDisplayOrder = root.makeEntry<string>("zoombar.uiDisplayOrder");
-        export const configurationTarget = root.makeMapEntry("zoombar.configurationTarget", configurationTargetObject);
+        export const defaultZoom = root.makeEntry<number>("zoombar.defaultZoom", "root-workspace");
+        export const zoomUnit = root.makeEntry<number>("zoombar.zoomUnit", "root-workspace");
+        export const preview = root.makeEntry<boolean>("zoombar.preview", "root-workspace");
+        export const zoomPreset = root.makeEntry<number[]>("zoombar.zoomPreset", "root-workspace");
+        export const zoomInLabel = root.makeEntry<string>("zoombar.zoomInLabel", "root-workspace");
+        export const zoomOutLabel = root.makeEntry<string>("zoombar.zoomOutLabel", "root-workspace");
+        export const fontZoomResetLabel = root.makeEntry<string>("zoombar.fontZoomResetLabel", "root-workspace");
+        export const uiDisplayOrder = root.makeEntry<string>("zoombar.uiDisplayOrder", "root-workspace");
+        export const configurationTarget = root.makeMapEntry("zoombar.configurationTarget", "root-workspace", configurationTargetObject);
+        export const zoomLevel = new vscel.config.Entry<number>({ key: "window.zoomLevel", });
     }
     let previousUiDisplayOrder = "";
     let zoomLabel : vscode.StatusBarItem;
@@ -80,7 +94,7 @@ export module ZoomBar
         timer: NodeJS.Timeout;
     }
     let waitingSetZoomEntry: SetZoomEntry | undefined  = undefined;
-    export const setZoomLevel = async (zoomLevel : number | InspectResult<number>, wait = 500) => new Promise
+    export const setZoomLevel = async (zoomLevel : number | InspectResult<number>, wait = 500) => new Promise<void>
     (
         async (resolve, rejct) =>
         {
@@ -104,27 +118,28 @@ export module ZoomBar
                             {
                                 if ("number" === typeof i.zoomLevel)
                                 {
-                                    await vscode.workspace.getConfiguration("window").update
+                                    const context = await Config.configurationTarget.get()();
+                                    await Config.zoomLevel.set
                                     (
-                                        "zoomLevel",
                                         i.zoomLevel,
-                                        await Config.configurationTarget.get("")()
+                                        context.scope,
+                                        context.target
                                     );
                                 }
                                 else
                                 {
                                     const inspectResult = <InspectResult<number>>i.zoomLevel;
-                                    await vscode.workspace.getConfiguration("window").update
+                                    await Config.zoomLevel.set
                                     (
-                                        "zoomLevel",
                                         inspectResult.globalValue,
-                                        true
+                                        vscel.config.Scope.user,
+                                        vscode.ConfigurationTarget.Global
                                     );
-                                    await vscode.workspace.getConfiguration("window").update
+                                    await Config.zoomLevel.set
                                     (
-                                        "zoomLevel",
                                         inspectResult.workspaceValue,
-                                        false
+                                        vscel.config.Scope.rootWorkspace,
+                                        vscode.ConfigurationTarget.Workspace
                                     );
                                 }
                             }
@@ -148,11 +163,11 @@ export module ZoomBar
         }
     );
     const getZoomLevel = () : number =>
-        waitingSetZoomEntry?.zoomLevel ??
-        vscode.workspace.getConfiguration("window")["zoomLevel"] ??
+        ("number" === typeof waitingSetZoomEntry?.zoomLevel ? waitingSetZoomEntry?.zoomLevel: null) ??
+        Config.zoomLevel.get() ??
         0.0;
-    const getZoomUnitLevel = () : number => percentToLevel(cent +Config.zoomUnit.get(""));
-    const getZoomPreset = () : number[] => Config.zoomPreset.get("")
+    const getZoomUnitLevel = () : number => percentToLevel(cent +Config.zoomUnit.get());
+    const getZoomPreset = () : number[] => Config.zoomPreset.get()
             .filter(distinctFilter)
             .sort((a,b) => b - a);
     export const initialize = (context : vscode.ExtensionContext): void =>
@@ -175,21 +190,21 @@ export module ZoomBar
             zoomInLabel = vscel.statusbar.createItem
             ({
                 alignment: vscode.StatusBarAlignment.Right,
-                text: Config.zoomInLabel.get(""),
+                text: Config.zoomInLabel.get(),
                 command: `${applicationKey}.zoomIn`,
                 tooltip: locale.map("zoombar-vscode.zoomIn.title")
             }),
             zoomOutLabel = vscel.statusbar.createItem
             ({
                 alignment: vscode.StatusBarAlignment.Right,
-                text: Config.zoomOutLabel.get(""),
+                text: Config.zoomOutLabel.get(),
                 command: `${applicationKey}.zoomOut`,
                 tooltip: locale.map("zoombar-vscode.zoomout.title")
             }),
             fontZoomResetLabel = vscel.statusbar.createItem
             ({
                 alignment: vscode.StatusBarAlignment.Right,
-                text: Config.fontZoomResetLabel.get(""),
+                text: Config.fontZoomResetLabel.get(),
                 command: `editor.action.fontZoomReset`,
                 tooltip: locale.map("zoombar-vscode.fontZoomReset.title")
             }),
@@ -204,7 +219,6 @@ export module ZoomBar
                         event.affectsConfiguration("window.zoomLevel")
                     )
                     {
-                        Config.root.entries.forEach(i => i.clear());
                         updateStatusBar();
                     }
                 }
@@ -214,21 +228,21 @@ export module ZoomBar
     };
     export const selectZoom = async () : Promise<void> =>
     {
-        const backup = <InspectResult<number>>vscode.workspace.getConfiguration("window").inspect("zoomLevel");
+        const backup = Config.zoomLevel.inspect();
         const currentZoomLevel = getZoomLevel();
         const currentZoom = roundZoom(levelToPercent(currentZoomLevel));
-        const preview = Config.preview.get("");
+        const preview = Config.preview.get();
         const rollback = async () => await setZoomLevel(backup);
         await vscel.menu.showQuickPick
         (
             [
                 {
-                    label: `$(home) ${locale.map("zoombar-vscode.selectZoom.resetZoom")} ( ${percentToDisplayString(Config.defaultZoom.get(""))} )`,
+                    label: `$(home) ${locale.map("zoombar-vscode.selectZoom.resetZoom")} ( ${percentToDisplayString(Config.defaultZoom.get())} )`,
                     description: "",
-                    preview: async () => await setZoomLevel(percentToLevel(Config.defaultZoom.get(""))),
+                    preview: async () => await setZoomLevel(percentToLevel(Config.defaultZoom.get())),
                 },
                 {
-                    label: `${Config.fontZoomResetLabel.get("")} ${locale.map("zoombar-vscode.fontZoomReset.title")}`,
+                    label: `${Config.fontZoomResetLabel.get()} ${locale.map("zoombar-vscode.fontZoomReset.title")}`,
                     description: locale.map("No preview"),
                     command: async () => await vscode.commands.executeCommand(`editor.action.fontZoomReset`),
                 },
@@ -283,12 +297,12 @@ export module ZoomBar
             }
         );
     };
-    export const resetZoom = () : Thenable<void> => setZoomLevel(percentToLevel(Config.defaultZoom.get("")));
+    export const resetZoom = () : Thenable<void> => setZoomLevel(percentToLevel(Config.defaultZoom.get()));
     export const zoomOut = () : Thenable<void> => setZoomLevel(getZoomLevel() -getZoomUnitLevel());
     export const zoomIn = () : Thenable<void> => setZoomLevel(getZoomLevel() +getZoomUnitLevel());
     export const updateStatusBar = () : void =>
     {
-        const uiDisplayOrder = Config.uiDisplayOrder.get("");
+        const uiDisplayOrder = Config.uiDisplayOrder.get();
         if (previousUiDisplayOrder !== uiDisplayOrder)
         {
             zoomLabel.hide();
@@ -312,15 +326,15 @@ export module ZoomBar
                         zoomLabel.show();
                         break;
                     case "+":
-                        zoomInLabel.text = Config.zoomInLabel.get("");
+                        zoomInLabel.text = Config.zoomInLabel.get();
                         zoomInLabel.show();
                         break;
                     case "-":
-                        zoomOutLabel.text = Config.zoomOutLabel.get("");
+                        zoomOutLabel.text = Config.zoomOutLabel.get();
                         zoomOutLabel.show();
                         break;
                     case "@":
-                        fontZoomResetLabel.text = Config.fontZoomResetLabel.get("");
+                        fontZoomResetLabel.text = Config.fontZoomResetLabel.get();
                         fontZoomResetLabel.show();
                         break;
                     }

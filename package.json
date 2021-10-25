@@ -199,6 +199,6 @@
         "vscode-test": "^1.4.0"
     },
     "dependencies": {
-        "@wraith13/vscel": "0.0.39"
+        "@wraith13/vscel": "^0.0.53"
     }
 }
