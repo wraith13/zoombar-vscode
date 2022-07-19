@@ -1,5 +1,6 @@
 .vscode/**
 .vscode-test/**
+.vscode-test-web/**
 out/test/**
 out/source/test/**
 test/**
@@ -9,6 +10,7 @@ source/**
 .gitignore
 tsconfig.json
 vsc-extension-quickstart.md
+webpack.config.js
 images/how-to-use.png
 images/screenshot.png
 images/zoomhex.1024.png

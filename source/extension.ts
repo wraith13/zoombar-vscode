@@ -104,7 +104,7 @@ export module ZoomBar
                 waitingSetZoomEntry.rejct();
                 waitingSetZoomEntry = undefined;
             }
-            const timer: NodeJS.Timeout = setTimeout
+            const timer: NodeJS.Timeout = <any>setTimeout // 本来、ここで any は要らないが、現状の webpack ベースのコンパイルではここでエラーになってしまう為。
             (
                 async () =>
                 {
