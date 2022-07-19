@@ -4,7 +4,11 @@ All notable changes to the "zoombar-vscode" extension will be documented in this
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## 1.4.1 - 2021-??-??
+## 1.4.1 - 2021-10-26
+
+### Changed
+
+- `activationEvents`: `*` -> `onStartupFinished`
 
 ### Fixed
 
