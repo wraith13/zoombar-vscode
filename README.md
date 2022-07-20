@@ -86,6 +86,10 @@ see ChangLog on [marketplace](https://marketplace.visualstudio.com/items/wraith1
 
 [Boost Software License](https://github.com/wraith13/zoombar-vscode/blob/master/LICENSE_1_0.txt)
 
+## Download VSIX file ( for VS Code compatible softwares )
+
+[Releases · wraith13/zoombar-vscode](https://github.com/wraith13/zoombar-vscode/releases)
+
 ## Other extensions of wraith13's work
 
 |Icon|Name|Description|
