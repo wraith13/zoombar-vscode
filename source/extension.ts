@@ -314,7 +314,7 @@ export module ZoomBar
         uiDisplayOrder
             .split("")
             .filter(distinctFilter)
-            .reverse()
+            // .reverse() Behavior changes with VS Code v1.36 or later.
             .forEach
             (
                 i =>
