@@ -6,6 +6,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## 1.4.2 - 2022-??-??
 
+### Removed
+
+- Web platform support abolished. ( `vscode.dev` )
+
 ### Fixed
 
 - Fixed an issue that the order of the items on the status bar was broken with VS Code v1.36 or later.
