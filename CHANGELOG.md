@@ -4,6 +4,12 @@ All notable changes to the "zoombar-vscode" extension will be documented in this
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## 1.4.3 - 2022-??-??
+
+### Security
+
+- npm audit fix
+
 ## 1.4.2 - 2022-07-22
 
 ### Removed
