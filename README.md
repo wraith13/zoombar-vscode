@@ -43,6 +43,7 @@ This extension contributes the following settings by [`settings.json`](https://c
 
 * `zoombar.defaultZoom`: set default zoom
 * `zoombar.zoomUnit`: set zoom unit
+* `zoombar.zoomUnitType`: set zoom unit type
 * `zoombar.preview`: temporarily apply the zoom before confirming.
 * `zoombar.zoomPreset`: set zoom preset
 * `zoombar.zoomInLabel`: set zoom in's label

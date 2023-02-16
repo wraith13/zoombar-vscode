@@ -69,6 +69,20 @@
                         "description": "%zoombar.zoomUnit.description%",
                         "scope": "window"
                     },
+                    "zoombar.zoomUnitType": {
+                        "type": "string",
+                        "enum": [
+                            "multiplicative",
+                            "additive"
+                        ],
+                        "default": "multiplicative",
+                        "description": "%zoombar.zoomUnitType.description%",
+                        "enumDescriptions": [
+                            "%zoombar.zoomUnitType.multiplicative.description%",
+                            "%zoombar.zoomUnitType.additive.description%"
+                        ],
+                        "scope": "window"
+                    },
                     "zoombar.preview": {
                         "type": "boolean",
                         "default": true,

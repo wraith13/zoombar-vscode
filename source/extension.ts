@@ -8,6 +8,34 @@ const locale = vscel.locale.make(localeEn, { "ja": localeJa });
 export module ZoomBar
 {
     const applicationKey = "zoombar-vscode";
+    const zoomUnitTypeObject = Object.freeze
+    ({
+        "multiplicative":
+        {
+            zoomOut: () : Promise<void> => setZoomLevel(getZoomLevel() -getZoomUnitLevel()),
+            zoomIn: () : Promise<void> => setZoomLevel(getZoomLevel() +getZoomUnitLevel()),
+        },
+        "additive":
+        {
+            zoomOut: async () : Promise<void> =>
+            {
+                const currentZoomLevel = getZoomLevel();
+                const currentZoom = levelToPercent(currentZoomLevel);
+                const unit = Config.zoomUnit.get();
+                if (unit *1.5 <= currentZoom)
+                {
+                    setZoomLevel(percentToLevel(currentZoom -unit));
+                }
+            },
+            zoomIn: async () : Promise<void> =>
+            {
+                const currentZoomLevel = getZoomLevel();
+                const currentZoom = levelToPercent(currentZoomLevel);
+                const unit = Config.zoomUnit.get();
+                setZoomLevel(percentToLevel(currentZoom +unit));
+            },
+        },
+    });
     const configurationTargetObject = Object.freeze
     ({
         "auto": async () =>
@@ -54,6 +82,7 @@ export module ZoomBar
         export const root = vscel.config.makeRoot(packageJson);
         export const defaultZoom = root.makeEntry<number>("zoombar.defaultZoom", "root-workspace");
         export const zoomUnit = root.makeEntry<number>("zoombar.zoomUnit", "root-workspace");
+        export const zoomUnitType = root.makeMapEntry("zoombar.zoomUnitType", "root-workspace", zoomUnitTypeObject);
         export const preview = root.makeEntry<boolean>("zoombar.preview", "root-workspace");
         export const zoomPreset = root.makeEntry<number[]>("zoombar.zoomPreset", "root-workspace");
         export const zoomInLabel = root.makeEntry<string>("zoombar.zoomInLabel", "root-workspace");
@@ -298,8 +327,8 @@ export module ZoomBar
         );
     };
     export const resetZoom = () : Thenable<void> => setZoomLevel(percentToLevel(Config.defaultZoom.get()));
-    export const zoomOut = () : Thenable<void> => setZoomLevel(getZoomLevel() -getZoomUnitLevel());
-    export const zoomIn = () : Thenable<void> => setZoomLevel(getZoomLevel() +getZoomUnitLevel());
+    export const zoomOut = () : Thenable<void> => Config.zoomUnitType.get().zoomOut();
+    export const zoomIn = () : Thenable<void> => Config.zoomUnitType.get().zoomIn();
     export const updateStatusBar = () : void =>
     {
         const uiDisplayOrder = Config.uiDisplayOrder.get();

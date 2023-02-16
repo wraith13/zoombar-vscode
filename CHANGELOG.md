@@ -4,7 +4,11 @@ All notable changes to the "zoombar-vscode" extension will be documented in this
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## 1.4.3 - 2022-??-??
+## 1.4.3 - 2023-??-??
+
+### Added
+
+- `zoombar.zoomUnitType` setting item. [#17](https://github.com/wraith13/zoombar-vscode/issues/17)
 
 ### Security
 
